@@ -3,12 +3,17 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: 'Pretendard', 'Apple SD Gothic Neo', system-ui, sans-serif;
-  background: #f8f5f2;
-  color: #2d2d2d;
+  font-family: 'Pretendard', 'Apple SD Gothic Neo', -apple-system, system-ui, sans-serif;
+  background: #EEF3FA;
+  color: #1a1a2e;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #root {
   min-height: 100vh;
+  max-width: 480px;
+  margin: 0 auto;
+  background: #EEF3FA;
+  position: relative;
 }
