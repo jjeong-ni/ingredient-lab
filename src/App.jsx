@@ -1,7 +1,8 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { ingredients, CATEGORIES } from './data/ingredients';
 import IngredientCard from './components/IngredientCard';
 import LabPanel from './components/LabPanel';
+import OnboardingModal from './components/OnboardingModal';
 
 const NAV = [
   { id: 'dictionary', label: '성분사전', icon: (active) => (
@@ -30,6 +31,18 @@ export default function App() {
   const [selectedDetail, setSelectedDetail] = useState(null);
   const [labSelected, setLabSelected] = useState([]);
   const [labSearch, setLabSearch] = useState('');
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  useEffect(() => {
+    if (!localStorage.getItem('ingredient-lab-visited')) {
+      setShowOnboarding(true);
+    }
+  }, []);
+
+  const handleCloseOnboarding = () => {
+    localStorage.setItem('ingredient-lab-visited', '1');
+    setShowOnboarding(false);
+  };
 
   const filtered = useMemo(() => {
     return ingredients.filter((ing) => {
@@ -321,6 +334,9 @@ export default function App() {
           })}
         </div>
       </nav>
+
+      {/* 온보딩 모달 */}
+      {showOnboarding && <OnboardingModal onClose={handleCloseOnboarding} />}
 
       {/* 상세 모달 (바텀시트 스타일) */}
       {selectedDetail && (
