@@ -193,8 +193,127 @@ function BuildStep({ l1, l2, l3, formula, onAdd, onRemove, onNext, onBack, onIng
   );
 }
 
+/* ─── 배합 가이드 드로어 ─── */
+function FormulaGuideDrawer({ l3, onClose }) {
+  const defaults = l3.defaults || {};
+  const entries = Object.entries(defaults).sort((a, b) => b[1] - a[1]);
+
+  // 카테고리별 전형적인 기능 설명
+  const roleNote = {
+    base: '제형의 기본 베이스 (정제수, 글리콜)',
+    emollient: '제형에 유연성·유분감 부여',
+    moisturizing: '수분 보유·흡습 역할',
+    surfactant: '세정·유화 (세안제에서 핵심)',
+    thickener: '점도·텍스처 조절',
+    preservative: '미생물 억제, 제품 안정화',
+    antioxidant: '산화 방지, 원료 안정화',
+    phadjuster: '제품 pH 범위 조절',
+    chelating: '금속이온 봉쇄, 방부 보조',
+    filmformer: '표면 피막 형성, 지속력',
+    sunscreen: '자외선 차단 (화학/물리)',
+    brightening: '멜라닌 억제, 미백 기능',
+    antiaging: '주름 개선, 탄력 강화',
+    exfoliant: '각질 제거, 피부 결 개선',
+    soothing: '피부 진정·항염',
+    fermented: '발효 유래 생체활성 성분',
+    plantextract: '식물 기능성 추출물',
+    haircare: '모발·두피 기능 성분',
+    fragrance: '향취 부여 (소량 사용)',
+    mineral: '색상·미네랄 기능',
+  };
+
+  return (
+    <>
+      {/* 딤 배경 */}
+      <div className="fixed inset-0 z-40 bg-black/40" onClick={onClose} />
+
+      {/* 드로어 패널 (오른쪽에서 슬라이드인) */}
+      <div className="fixed top-0 right-0 h-full z-50 flex flex-col bg-white"
+        style={{
+          width: 'min(320px, 88vw)',
+          boxShadow: '-4px 0 24px rgba(0,0,0,0.15)',
+          animation: 'slideInRight 0.22s ease-out',
+        }}>
+        {/* 헤더 */}
+        <div className="flex items-center justify-between px-4 pt-5 pb-3 flex-shrink-0"
+          style={{ borderBottom: '1px solid #F3F4F6' }}>
+          <div>
+            <p className="font-extrabold text-gray-900 text-sm">📋 배합 가이드</p>
+            <p className="text-[10px] text-gray-400 mt-0.5">{l3.icon} {l3.label} 보편적 비율</p>
+          </div>
+          <button onClick={onClose}
+            className="w-8 h-8 rounded-xl bg-gray-100 flex items-center justify-center text-gray-500 font-bold text-sm">
+            ✕
+          </button>
+        </div>
+
+        {/* 가이드 설명 */}
+        <div className="px-4 py-2.5 flex-shrink-0"
+          style={{ background: '#FFFBEB', borderBottom: '1px solid #FDE68A' }}>
+          <p className="text-[10px] text-amber-700 leading-relaxed">
+            💡 아래 비율은 업계 보편 기준입니다.<br/>
+            실제 처방은 제형·원료 특성에 따라 조정하세요.
+          </p>
+        </div>
+
+        {/* 카테고리별 권장 함량 목록 */}
+        <div className="flex-1 overflow-y-auto px-4 py-3 space-y-2">
+          {entries.map(([catKey, pct]) => {
+            const cat = CATEGORIES[catKey] || { label: catKey, icon: '•', color: '#6B7280', bg: '#F3F4F6' };
+            const note = roleNote[catKey] || '';
+            // 시각적 바 너비: 최대 pct를 기준으로 상대 비율
+            const maxPct = entries[0][1];
+            const barW = Math.min((pct / maxPct) * 100, 100);
+            return (
+              <div key={catKey} className="rounded-xl p-3"
+                style={{ background: cat.bg, border: `1px solid ${cat.color}20` }}>
+                <div className="flex items-center justify-between mb-1.5">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-base">{cat.icon}</span>
+                    <span className="text-xs font-bold" style={{ color: cat.color }}>{cat.label}</span>
+                  </div>
+                  <span className="text-sm font-extrabold" style={{ color: cat.color }}>
+                    ~{pct}%
+                  </span>
+                </div>
+                {/* 비율 바 */}
+                <div className="w-full h-1.5 bg-white/60 rounded-full overflow-hidden mb-1.5">
+                  <div className="h-full rounded-full"
+                    style={{ width: `${barW}%`, background: cat.color, opacity: 0.7 }} />
+                </div>
+                {note && <p className="text-[10px] text-gray-500 leading-snug">{note}</p>}
+              </div>
+            );
+          })}
+
+          {/* 합계 */}
+          <div className="rounded-xl p-3 mt-1" style={{ background: '#F0F9FF', border: '1px solid #BAE6FD' }}>
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-blue-700">가이드 합계</span>
+              <span className="text-sm font-extrabold text-blue-700">
+                {entries.reduce((s, [, v]) => s + v, 0).toFixed(1)}%
+              </span>
+            </div>
+            <p className="text-[10px] text-blue-500 mt-1">
+              잔여분은 향료·착색제 등 소량 성분으로 채웁니다
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes slideInRight {
+          from { transform: translateX(100%); opacity: 0; }
+          to   { transform: translateX(0);    opacity: 1; }
+        }
+      `}</style>
+    </>
+  );
+}
+
 /* ─── Step 5: 배합 확인 ─── */
 function FormulaStep({ l1, l2, l3, formula, onBack, onPctChange, onRemove }) {
+  const [guideOpen, setGuideOpen] = useState(false);
   const total = formula.reduce((sum, f) => sum + f.pct, 0);
   const ids = formula.map((f) => f.ingredient.id);
   const matched = findSynergies(ids);
@@ -214,14 +333,28 @@ function FormulaStep({ l1, l2, l3, formula, onBack, onPctChange, onRemove }) {
       {/* 브레드크럼 헤더 */}
       <div className="flex items-center justify-between mb-4">
         <button onClick={onBack} className="flex items-center gap-1.5 text-sm text-gray-500 font-semibold">← 성분 선택</button>
-        <div className="flex items-center gap-1 text-xs">
-          <span className="text-lg">{l3.icon}</span>
-          <div className="flex flex-col items-end">
-            <span className="font-extrabold text-gray-800 text-xs">{l3.label}</span>
-            <span className="text-[10px] text-gray-400">{l1.label} · {l2.label}</span>
+        <div className="flex items-center gap-2">
+          {/* 가이드 토글 버튼 */}
+          <button onClick={() => setGuideOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all active:scale-95"
+            style={guideOpen
+              ? { background: '#4B9EFF', color: 'white' }
+              : { background: '#EFF6FF', color: '#2563EB', border: '1.5px solid #BFDBFE' }}>
+            <span>📋</span>
+            <span>배합 가이드</span>
+          </button>
+          <div className="flex items-center gap-1 text-xs">
+            <span className="text-lg">{l3.icon}</span>
+            <div className="flex flex-col items-end">
+              <span className="font-extrabold text-gray-800 text-xs">{l3.label}</span>
+              <span className="text-[10px] text-gray-400">{l1.label} · {l2.label}</span>
+            </div>
           </div>
         </div>
       </div>
+
+      {/* 가이드 드로어 */}
+      {guideOpen && <FormulaGuideDrawer l3={l3} onClose={() => setGuideOpen(false)} />}
 
       {/* 총 함량 바 */}
       <div className="bg-white rounded-2xl p-4 mb-4" style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
