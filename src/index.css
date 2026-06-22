@@ -4,16 +4,18 @@
 
 body {
   font-family: 'Pretendard', 'Apple SD Gothic Neo', -apple-system, system-ui, sans-serif;
-  background: #EEF3FA;
-  color: #1a1a2e;
+  background: linear-gradient(135deg, #dff0f8 0%, #ece8f8 45%, #f8e4f4 100%);
+  background-attachment: fixed;
+  color: #2d2d4e;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
 }
 
 #root {
   min-height: 100vh;
   max-width: 480px;
   margin: 0 auto;
-  background: #EEF3FA;
+  background: transparent;
   position: relative;
 }
