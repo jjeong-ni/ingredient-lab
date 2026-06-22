@@ -4,7 +4,7 @@ import { PRODUCT_TREE, suggestPct, parseConc } from '../data/productTypes';
 import IngredientCard from './IngredientCard';
 
 const GLASS = {
-  background: 'rgba(255,255,255,0.50)',
+  background: 'rgba(255,255,255,0.55)',
   backdropFilter: 'blur(14px)',
   WebkitBackdropFilter: 'blur(14px)',
   border: '1px solid rgba(255,255,255,0.82)',
@@ -41,8 +41,16 @@ function Step1({ onSelect }) {
         {PRODUCT_TREE.map((l1) => (
           <button key={l1.id} onClick={() => onSelect(l1)}
             className="flex flex-col items-center gap-2 p-4 rounded-2xl transition-all active:scale-95"
-            style={{ ...GLASS, minHeight: 120 }}>
-            <span className="text-4xl leading-none">{l1.icon}</span>
+            style={{
+              background: l1.bg || '#ede8f8',
+              border: '1.5px solid rgba(255,255,255,0.85)',
+              boxShadow: `0 4px 16px ${l1.color}18, inset 0 1px 0 rgba(255,255,255,0.9)`,
+              minHeight: 130
+            }}>
+            <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl"
+              style={{ background: `${l1.color}22` }}>
+              {l1.icon}
+            </div>
             <span className="font-extrabold text-sm" style={{ color: '#2d2d4e' }}>{l1.label}</span>
             <span className="text-[10px] text-center leading-snug" style={{ color: '#9999bb' }}>{l1.desc}</span>
           </button>
@@ -68,15 +76,20 @@ function Step2({ l1, onSelect, onBack }) {
         {l1.children.map((l2) => (
           <button key={l2.id} onClick={() => onSelect(l2)}
             className="flex flex-col items-center gap-2 p-4 rounded-2xl transition-all active:scale-[0.96]"
-            style={{ ...GLASS, minHeight: 120 }}>
+            style={{
+              background: l2.bg || '#ede8f8',
+              border: '1.5px solid rgba(255,255,255,0.85)',
+              boxShadow: `0 4px 16px ${l2.color}18, inset 0 1px 0 rgba(255,255,255,0.9)`,
+              minHeight: 120
+            }}>
             <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl"
-              style={{ background: l2.bg || 'rgba(236,232,248,0.5)' }}>
+              style={{ background: `${l2.color}22` }}>
               {l2.icon}
             </div>
             <div className="text-center">
               <p className="font-bold text-sm" style={{ color: '#2d2d4e' }}>{l2.label}</p>
               <span className="inline-block text-[10px] font-bold px-2 py-0.5 rounded-lg mt-1"
-                style={{ background: l2.bg || 'rgba(236,232,248,0.5)', color: l2.color }}>
+                style={{ background: 'rgba(255,255,255,0.7)', color: l2.color }}>
                 {l2.children.length}종
               </span>
             </div>
@@ -101,9 +114,14 @@ function Step3({ l1, l2, onSelect, onBack }) {
         {l2.children.map((l3) => (
           <button key={l3.id} onClick={() => onSelect(l3)}
             className="flex flex-col items-start gap-2 p-4 rounded-2xl transition-all active:scale-95"
-            style={{ ...GLASS, minHeight: 110 }}>
+            style={{
+              background: l2.bg || '#ede8f8',
+              border: '1.5px solid rgba(255,255,255,0.85)',
+              boxShadow: `0 4px 16px ${l2.color}18, inset 0 1px 0 rgba(255,255,255,0.9)`,
+              minHeight: 110
+            }}>
             <div className="w-10 h-10 rounded-2xl flex items-center justify-center text-2xl"
-              style={{ background: l2.bg || 'rgba(236,232,248,0.5)' }}>
+              style={{ background: `${l2.color}22` }}>
               {l3.icon}
             </div>
             <div>

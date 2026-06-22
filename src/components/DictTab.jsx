@@ -12,7 +12,7 @@ function countByCategory() {
 const categoryCounts = countByCategory();
 
 const GLASS = {
-  background: 'rgba(255,255,255,0.50)',
+  background: 'rgba(255,255,255,0.55)',
   backdropFilter: 'blur(14px)',
   WebkitBackdropFilter: 'blur(14px)',
   border: '1px solid rgba(255,255,255,0.82)',
@@ -63,9 +63,14 @@ function DictHome({ onSelectCategory, onAllClick }) {
           return (
             <button key={key} onClick={() => onSelectCategory(key)}
               className="flex flex-col items-center gap-2 p-4 rounded-2xl transition-all active:scale-[0.96]"
-              style={{ ...GLASS, minHeight: 110 }}>
+              style={{
+                background: cat.bg || '#ede8f8',
+                border: '1.5px solid rgba(255,255,255,0.85)',
+                boxShadow: `0 4px 16px ${cat.color}18, inset 0 1px 0 rgba(255,255,255,0.9)`,
+                minHeight: 110
+              }}>
               <div className="w-11 h-11 rounded-2xl flex items-center justify-center text-2xl"
-                style={{ background: cat.bg || 'rgba(236,232,248,0.5)' }}>
+                style={{ background: `${cat.color}22` }}>
                 {cat.icon}
               </div>
               <div className="text-center">

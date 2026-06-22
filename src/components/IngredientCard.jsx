@@ -14,14 +14,12 @@ function ModalView({ ingredient }) {
     <div className="px-4 pb-2">
       <div className="rounded-2xl p-4 mb-4 flex items-start gap-3"
         style={{
-          background: 'rgba(255,255,255,0.6)',
-          backdropFilter: 'blur(14px)',
-          WebkitBackdropFilter: 'blur(14px)',
-          border: '1px solid rgba(255,255,255,0.85)',
-          boxShadow: '0 4px 20px rgba(140,140,200,0.10)',
+          background: cat.bg || '#ede8f8',
+          border: '1.5px solid rgba(255,255,255,0.85)',
+          boxShadow: `0 4px 20px ${cat.color}18, inset 0 1px 0 rgba(255,255,255,0.9)`,
         }}>
         <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl flex-shrink-0"
-          style={{ background: cat.bg || 'rgba(240,240,255,0.5)' }}>
+          style={{ background: `${cat.color}22` }}>
           {ingredient.emoji}
         </div>
         <div className="flex-1 min-w-0">
@@ -72,7 +70,7 @@ function ModalView({ ingredient }) {
 
         <div className="grid grid-cols-2 gap-2">
           <div className="rounded-2xl p-3"
-            style={{ background: 'rgba(255,255,255,0.55)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.85)' }}>
+            style={{ background: cat.bg || '#ede8f8', border: '1.5px solid rgba(255,255,255,0.85)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.9)' }}>
             <p className="text-xs mb-1" style={{ color: '#9999bb' }}>권장 농도</p>
             <p className="font-bold text-sm" style={{ color: '#2d2d4e' }}>{ingredient.concentration}</p>
           </div>
@@ -112,11 +110,9 @@ export default function IngredientCard({ ingredient, onClick, inLab, onLabToggle
       onClick={() => onClick?.(ingredient)}
       className="cursor-pointer transition-all active:scale-[0.95] rounded-2xl overflow-hidden flex flex-col relative"
       style={{
-        background: 'rgba(255,255,255,0.50)',
-        backdropFilter: 'blur(14px)',
-        WebkitBackdropFilter: 'blur(14px)',
-        border: '1px solid rgba(255,255,255,0.82)',
-        boxShadow: '0 2px 16px rgba(140,140,200,0.10)',
+        background: cat.bg || '#ede8f8',
+        border: '1.5px solid rgba(255,255,255,0.85)',
+        boxShadow: `0 4px 20px ${cat.color}18, inset 0 1px 0 rgba(255,255,255,0.9)`,
         minHeight: 138,
       }}
     >
@@ -125,7 +121,7 @@ export default function IngredientCard({ ingredient, onClick, inLab, onLabToggle
       </div>
 
       <div className="flex items-center justify-center pt-4 pb-2.5 flex-shrink-0"
-        style={{ background: cat.bg ? `${cat.bg}bb` : 'rgba(236,232,248,0.45)' }}>
+        style={{ background: `${cat.color}20` }}>
         <span className="text-3xl leading-none select-none">{ingredient.emoji}</span>
       </div>
 
@@ -146,7 +142,7 @@ export default function IngredientCard({ ingredient, onClick, inLab, onLabToggle
           className="w-7 h-7 rounded-xl flex items-center justify-center transition-all active:scale-90 flex-shrink-0"
           style={inLab
             ? { background: 'linear-gradient(135deg,#7B9EFF,#C084FC)', color: 'white', boxShadow: '0 2px 8px rgba(123,158,255,0.35)' }
-            : { background: 'rgba(220,220,240,0.55)', color: '#9999bb', border: '1px solid rgba(255,255,255,0.85)' }}>
+            : { background: 'rgba(255,255,255,0.65)', color: '#9999bb', border: '1px solid rgba(255,255,255,0.85)' }}>
           <span className="text-xs font-bold leading-none">{inLab ? '✓' : '+'}</span>
         </button>
       </div>

@@ -4,8 +4,7 @@
 
 body {
   font-family: 'Pretendard', 'Apple SD Gothic Neo', -apple-system, system-ui, sans-serif;
-  background: linear-gradient(135deg, #dff0f8 0%, #ece8f8 45%, #f8e4f4 100%);
-  background-attachment: fixed;
+  background: linear-gradient(160deg, #f8f5ff 0%, #f4f0fb 50%, #fdf0f8 100%);
   color: #2d2d4e;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
