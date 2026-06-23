@@ -113,6 +113,7 @@ export default function App() {
               savedFormulas={savedFormulas}
               onSaveFormula={handleSaveFormula}
               onDeleteFormula={handleDeleteFormula}
+              labDictIds={labIngredientIds}
             />
           )}
         </main>
@@ -140,6 +141,12 @@ export default function App() {
                   <span className="text-[10px] font-bold" style={{ color: active ? accent : '#b4b4cc' }}>
                     {n.label}
                   </span>
+                  {n.id === 'lab' && labIngredientIds.size > 0 && (
+                    <span className="absolute top-1.5 right-8 w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold text-white"
+                      style={{ background: '#C084FC' }}>
+                      {labIngredientIds.size}
+                    </span>
+                  )}
                 </button>
               );
             })}

@@ -69,7 +69,8 @@ function findSynergies(ids) {
   return synergies.filter((s) => s.ids.every((id) => ids.includes(id)));
 }
 
-function Step1({ onSelect, savedFormulas, onDeleteFormula }) {
+function Step1({ onSelect, savedFormulas, onDeleteFormula, labDictIds }) {
+  const dictCount = labDictIds?.size || 0;
   return (
     <div className="px-4 pt-3 pb-6">
       <div className="rounded-2xl p-4 mb-5"
@@ -82,6 +83,14 @@ function Step1({ onSelect, savedFormulas, onDeleteFormula }) {
         <p className="font-extrabold text-white text-base">⚗️ 성분 실험실</p>
         <p className="text-white/75 text-xs mt-1">만들 제품 유형을 선택하면<br/>성분별 권장 함량을 안내해드려요</p>
       </div>
+
+      {dictCount > 0 && (
+        <div className="rounded-2xl p-3 mb-4"
+          style={{ background: 'rgba(219,234,254,0.6)', border: '1px solid rgba(186,230,253,0.5)' }}>
+          <p className="text-xs font-bold" style={{ color: '#2563eb' }}>📌 성분사전에서 {dictCount}개 성분 선택됨</p>
+          <p className="text-[10px] mt-0.5" style={{ color: '#60a5fa' }}>제품 유형을 선택하면 배합에 빠르게 추가할 수 있어요</p>
+        </div>
+      )}
 
       {savedFormulas && savedFormulas.length > 0 && (
         <div className="mb-5">
@@ -211,10 +220,15 @@ function Step3({ l1, l2, onSelect, onBack }) {
   );
 }
 
-function BuildStep({ l1, l2, l3, formula, onAdd, onRemove, onNext, onBack, onIngredientClick }) {
+function BuildStep({ l1, l2, l3, formula, onAdd, onRemove, onNext, onBack, onIngredientClick, labDictIds }) {
   const [catFilter, setCatFilter] = useState('all');
   const [search, setSearch] = useState('');
   const selectedIds = new Set(formula.map((f) => f.ingredient.id));
+
+  const dictIngredients = useMemo(() => {
+    if (!labDictIds?.size) return [];
+    return ingredients.filter((i) => labDictIds.has(i.id));
+  }, [labDictIds]);
 
   const filtered = useMemo(() => {
     let list = catFilter !== 'all' ? ingredients.filter((i) => i.category === catFilter) : [...ingredients];
@@ -266,6 +280,29 @@ function BuildStep({ l1, l2, l3, formula, onAdd, onRemove, onNext, onBack, onIng
         </div>
         <p className="text-[10px] mt-1" style={{ color: '#9999bb' }}>{filtered.length}종</p>
       </div>
+
+      {dictIngredients.length > 0 && (
+        <div className="px-4 pt-3 pb-2">
+          <p className="text-[10px] font-extrabold uppercase tracking-widest mb-2" style={{ color: '#9999bb' }}>📌 성분사전 선택 항목</p>
+          <div className="flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
+            {dictIngredients.map((ing) => {
+              const inFormula = selectedIds.has(ing.id);
+              return (
+                <button key={ing.id}
+                  onClick={() => inFormula ? onRemove(ing.id) : onAdd(ing)}
+                  className="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all active:scale-95"
+                  style={inFormula
+                    ? { background: 'linear-gradient(135deg,#7B9EFF,#C084FC)', color: 'white', boxShadow: '0 2px 8px rgba(123,158,255,0.3)' }
+                    : { background: 'rgba(255,255,255,0.75)', color: '#2d2d4e', border: '1.5px solid rgba(123,158,255,0.25)' }}>
+                  <span>{ing.emoji}</span>
+                  <span>{ing.name}</span>
+                  {inFormula && <span className="opacity-80">✓</span>}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       <div className="px-4 pt-3 grid grid-cols-2 gap-2 pb-32">
         {filtered.map((ing) => (
@@ -633,7 +670,7 @@ function IngredientModal({ ingredient, onClose, inLab, onToggle }) {
   );
 }
 
-export default function LabTab({ savedFormulas, onSaveFormula, onDeleteFormula }) {
+export default function LabTab({ savedFormulas, onSaveFormula, onDeleteFormula, labDictIds }) {
   const [step, setStep] = useState(1);
   const [l1, setL1] = useState(null);
   const [l2, setL2] = useState(null);
@@ -658,14 +695,15 @@ export default function LabTab({ savedFormulas, onSaveFormula, onDeleteFormula }
 
   return (
     <div>
-      {step === 1 && <Step1 onSelect={selectL1} savedFormulas={savedFormulas} onDeleteFormula={onDeleteFormula} />}
+      {step === 1 && <Step1 onSelect={selectL1} savedFormulas={savedFormulas} onDeleteFormula={onDeleteFormula} labDictIds={labDictIds} />}
       {step === 2 && <Step2 l1={l1} onSelect={selectL2} onBack={reset} />}
       {step === 3 && <Step3 l1={l1} l2={l2} onSelect={selectL3} onBack={() => setStep(2)} />}
       {step === 4 && (
         <BuildStep l1={l1} l2={l2} l3={l3}
           formula={formula} onAdd={handleAdd} onRemove={handleRemove}
           onNext={() => setStep(5)} onBack={() => setStep(3)}
-          onIngredientClick={setModal} />
+          onIngredientClick={setModal}
+          labDictIds={labDictIds} />
       )}
       {step === 5 && (
         <FormulaStep l1={l1} l2={l2} l3={l3}
