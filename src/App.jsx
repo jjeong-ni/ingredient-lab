@@ -31,6 +31,14 @@ export default function App() {
   const [tab, setTab] = useState('dict');
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [labIngredientIds, setLabIngredientIds] = useState(new Set());
+  const [favorites, setFavorites] = useState(() => {
+    try { return new Set(JSON.parse(localStorage.getItem('favorites') || '[]')); }
+    catch { return new Set(); }
+  });
+  const [savedFormulas, setSavedFormulas] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('savedFormulas') || '[]'); }
+    catch { return []; }
+  });
 
   useEffect(() => {
     const seen = localStorage.getItem('seenOnboarding');
@@ -42,6 +50,32 @@ export default function App() {
       const next = new Set(prev);
       if (next.has(ingredient.id)) next.delete(ingredient.id);
       else next.add(ingredient.id);
+      return next;
+    });
+  }, []);
+
+  const handleFavoriteToggle = useCallback((ingredient) => {
+    setFavorites(prev => {
+      const next = new Set(prev);
+      if (next.has(ingredient.id)) next.delete(ingredient.id);
+      else next.add(ingredient.id);
+      localStorage.setItem('favorites', JSON.stringify([...next]));
+      return next;
+    });
+  }, []);
+
+  const handleSaveFormula = useCallback((formula) => {
+    setSavedFormulas(prev => {
+      const next = [...prev, formula];
+      localStorage.setItem('savedFormulas', JSON.stringify(next));
+      return next;
+    });
+  }, []);
+
+  const handleDeleteFormula = useCallback((id) => {
+    setSavedFormulas(prev => {
+      const next = prev.filter(f => f.id !== id);
+      localStorage.setItem('savedFormulas', JSON.stringify(next));
       return next;
     });
   }, []);
@@ -66,8 +100,21 @@ export default function App() {
         </header>
 
         <main className="flex-1 overflow-y-auto pb-20">
-          {tab === 'dict' && <DictTab labIds={labIngredientIds} onLabToggle={handleLabToggle} />}
-          {tab === 'lab'  && <LabTab />}
+          {tab === 'dict' && (
+            <DictTab
+              labIds={labIngredientIds}
+              onLabToggle={handleLabToggle}
+              favorites={favorites}
+              onFavoriteToggle={handleFavoriteToggle}
+            />
+          )}
+          {tab === 'lab' && (
+            <LabTab
+              savedFormulas={savedFormulas}
+              onSaveFormula={handleSaveFormula}
+              onDeleteFormula={handleDeleteFormula}
+            />
+          )}
         </main>
 
         <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] z-30"

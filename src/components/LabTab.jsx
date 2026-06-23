@@ -18,11 +18,58 @@ const GLASS_HEADER = {
   borderBottom: '1px solid rgba(255,255,255,0.90)',
 };
 
+const SEARCH_ALIASES = {
+  '비타민c': ['아스코르브', '아스코르빈', 'ascorbic'],
+  '비타민e': ['토코페롤', 'tocopherol'],
+  '비타민a': ['레티놀', '레티닐', 'retinol', 'retinyl'],
+  '레티놀': ['retinol', '비타민a', '레티노'],
+  '히알루론산': ['히아루론', 'hyaluronic', '하이알루로닉'],
+  '나이아신아마이드': ['나이아신아미드', 'niacinamide', '비타민b3'],
+  '판테놀': ['panthenol', '프로비타민b5'],
+  '세라마이드': ['ceramide'],
+  '콜라겐': ['collagen'],
+  '펩타이드': ['peptide'],
+  '알부틴': ['arbutin'],
+  'aha': ['글리콜릭', '락틱', 'glycolic', 'lactic'],
+  'bha': ['살리실릭', 'salicylic'],
+  '녹차': ['그린티', 'green tea', '카테킨'],
+  '마데카소사이드': ['센텔라', 'centella', '시카'],
+  '시카': ['센텔라', 'centella', '마데카소사이드'],
+};
+
+function expandQuery(q) {
+  const lower = q.toLowerCase();
+  const terms = new Set([lower]);
+  for (const [key, aliases] of Object.entries(SEARCH_ALIASES)) {
+    if (lower.includes(key) || key.includes(lower)) {
+      aliases.forEach((a) => terms.add(a));
+    }
+    if (aliases.some((a) => lower.includes(a) || a.includes(lower))) {
+      terms.add(key);
+      aliases.forEach((a) => terms.add(a));
+    }
+  }
+  return [...terms];
+}
+
+function filterIngredients(list, query) {
+  if (!query.trim()) return list;
+  const terms = expandQuery(query.trim());
+  return list.filter((i) => {
+    const searchStr = [
+      i.name, i.nameEn, i.function,
+      ...(i.painPoints || []),
+      ...(i.tags || []),
+    ].join(' ').toLowerCase();
+    return terms.some((t) => searchStr.includes(t));
+  });
+}
+
 function findSynergies(ids) {
   return synergies.filter((s) => s.ids.every((id) => ids.includes(id)));
 }
 
-function Step1({ onSelect }) {
+function Step1({ onSelect, savedFormulas, onDeleteFormula }) {
   return (
     <div className="px-4 pt-3 pb-6">
       <div className="rounded-2xl p-4 mb-5"
@@ -35,6 +82,35 @@ function Step1({ onSelect }) {
         <p className="font-extrabold text-white text-base">⚗️ 성분 실험실</p>
         <p className="text-white/75 text-xs mt-1">만들 제품 유형을 선택하면<br/>성분별 권장 함량을 안내해드려요</p>
       </div>
+
+      {savedFormulas && savedFormulas.length > 0 && (
+        <div className="mb-5">
+          <p className="text-[10px] font-extrabold uppercase tracking-widest mb-2.5" style={{ color: '#9999bb' }}>저장된 배합</p>
+          <div className="space-y-2">
+            {savedFormulas.map((f) => (
+              <div key={f.id} className="rounded-2xl p-3.5 flex items-start gap-3"
+                style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(255,255,255,0.85)', boxShadow: '0 2px 12px rgba(140,140,200,0.10)' }}>
+                <span className="text-2xl flex-shrink-0">{f.icon}</span>
+                <div className="flex-1 min-w-0">
+                  <p className="font-bold text-sm" style={{ color: '#2d2d4e' }}>{f.name}</p>
+                  <p className="text-[10px] mb-1.5" style={{ color: '#9999bb' }}>{f.l1Label} · {f.l2Label} · {f.createdAt}</p>
+                  <div className="flex flex-wrap gap-1">
+                    {f.items.map((item, i) => (
+                      <span key={i} className="text-[10px] px-1.5 py-0.5 rounded-lg font-medium"
+                        style={{ background: 'rgba(235,240,255,0.8)', color: '#7B9EFF' }}>
+                        {item.emoji} {item.name} {item.pct.toFixed(1)}%
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <button onClick={() => onDeleteFormula(f.id)}
+                  className="flex-shrink-0 w-7 h-7 rounded-xl flex items-center justify-center"
+                  style={{ background: 'rgba(248,113,113,0.15)', color: '#f87171' }}>×</button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <p className="text-[10px] font-extrabold uppercase tracking-widest mb-3" style={{ color: '#9999bb' }}>카테고리 선택</p>
       <div className="grid grid-cols-3 gap-3">
@@ -141,12 +217,9 @@ function BuildStep({ l1, l2, l3, formula, onAdd, onRemove, onNext, onBack, onIng
   const selectedIds = new Set(formula.map((f) => f.ingredient.id));
 
   const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    return ingredients.filter((i) => {
-      if (catFilter !== 'all' && i.category !== catFilter) return false;
-      if (q && !i.name.includes(q) && !i.nameEn.toLowerCase().includes(q) && !i.function.includes(q)) return false;
-      return true;
-    }).sort((a, b) => a.name.localeCompare(b.name, 'ko'));
+    let list = catFilter !== 'all' ? ingredients.filter((i) => i.category === catFilter) : [...ingredients];
+    list = filterIngredients(list, search);
+    return list.sort((a, b) => a.name.localeCompare(b.name, 'ko'));
   }, [catFilter, search]);
 
   return (
@@ -165,7 +238,7 @@ function BuildStep({ l1, l2, l3, formula, onAdd, onRemove, onNext, onBack, onIng
         <div className="relative mb-2">
           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm" style={{ color: '#9999bb' }}>🔍</span>
           <input value={search} onChange={(e) => setSearch(e.target.value)}
-            placeholder="성분명, 기능 검색..."
+            placeholder="성분명, 기능, 비타민C 등 검색..."
             className="w-full pl-9 pr-9 py-2.5 rounded-xl text-sm outline-none"
             style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(255,255,255,0.85)', color: '#2d2d4e' }} />
           {search && (
@@ -309,24 +382,67 @@ function FormulaGuideDrawer({ l3, onClose }) {
   );
 }
 
-function FormulaStep({ l1, l2, l3, formula, onBack, onPctChange, onRemove }) {
+const UNIT_OPTIONS = [
+  { label: '0.01%', value: 0.01 },
+  { label: '0.1%', value: 0.1 },
+  { label: '0.5%', value: 0.5 },
+  { label: '1%', value: 1 },
+];
+
+function FormulaStep({ l1, l2, l3, formula, onBack, onPctChange, onRemove, onSaveFormula }) {
   const [guideOpen, setGuideOpen] = useState(false);
+  const [unit, setUnit] = useState(0.5);
+  const [copied, setCopied] = useState(false);
+  const [saved, setSaved] = useState(false);
+
   const total = formula.reduce((sum, f) => sum + f.pct, 0);
   const ids = formula.map((f) => f.ingredient.id);
   const matched = findSynergies(ids);
   const painPoints = [...new Set(formula.flatMap((f) => f.ingredient.painPoints))];
   const pctColor = total > 100 ? '#f87171' : total > 90 ? '#fbbf24' : '#34d399';
 
-  function adjust(id, delta) {
+  function adjust(id, direction) {
     const item = formula.find((f) => f.ingredient.id === id);
     if (!item) return;
     const conc = parseConc(item.ingredient.concentration);
-    const next = Math.max(0.1, Math.min(conc.max || 100, parseFloat((item.pct + delta).toFixed(1))));
+    const delta = direction * unit;
+    const next = Math.max(0, Math.min(conc.max || 100, parseFloat((item.pct + delta).toFixed(3))));
     onPctChange(id, next);
   }
 
+  async function handleCopy() {
+    const text = [
+      `${l3.icon} ${l3.label} (${l1.label} · ${l2.label})`,
+      '─'.repeat(24),
+      ...formula.map((f) => `${f.ingredient.emoji} ${f.ingredient.name}: ${f.pct.toFixed(2)}%`),
+      '─'.repeat(24),
+      `총 함량: ${total.toFixed(2)}%`,
+    ].join('\n');
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (e) {}
+  }
+
+  function handleSave() {
+    if (!onSaveFormula) return;
+    const data = {
+      id: Date.now(),
+      name: l3.label,
+      icon: l3.icon,
+      l1Label: l1.label,
+      l2Label: l2.label,
+      createdAt: new Date().toLocaleDateString('ko'),
+      items: formula.map((f) => ({ name: f.ingredient.name, emoji: f.ingredient.emoji, pct: f.pct })),
+    };
+    onSaveFormula(data);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+  }
+
   return (
-    <div className="px-4 pt-3 pb-28">
+    <div className="px-4 pt-3 pb-36">
       <div className="flex items-center justify-between mb-4">
         <button onClick={onBack} className="flex items-center gap-1.5 text-sm font-semibold" style={{ color: '#9999bb' }}>← 성분 선택</button>
         <div className="flex items-center gap-2">
@@ -366,6 +482,21 @@ function FormulaStep({ l1, l2, l3, formula, onBack, onPctChange, onRemove }) {
         </div>
       </div>
 
+      <div className="mb-4">
+        <p className="text-[10px] font-extrabold uppercase tracking-widest mb-2" style={{ color: '#9999bb' }}>조절 단위</p>
+        <div className="flex gap-1.5">
+          {UNIT_OPTIONS.map((opt) => (
+            <button key={opt.value} onClick={() => setUnit(opt.value)}
+              className="flex-1 py-2 rounded-xl text-xs font-bold transition-all active:scale-95"
+              style={unit === opt.value
+                ? { background: 'linear-gradient(135deg,#7B9EFF,#C084FC)', color: 'white' }
+                : { background: 'rgba(220,220,240,0.5)', color: '#9999bb', border: '1px solid rgba(255,255,255,0.8)' }}>
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       <p className="text-[10px] font-extrabold uppercase tracking-widest mb-2.5" style={{ color: '#9999bb' }}>성분 함량 조절</p>
       <div className="space-y-2 mb-5">
         {formula.map(({ ingredient, pct }) => {
@@ -396,11 +527,11 @@ function FormulaStep({ l1, l2, l3, formula, onBack, onPctChange, onRemove }) {
                       style={{ width: `${Math.min((pct / (conc.max || Math.max(pct, 5))) * 100, 100)}%`, background: cat.color || '#7B9EFF' }} />
                   </div>
                   <div className="flex items-center gap-1 flex-shrink-0">
-                    <button onClick={() => adjust(ingredient.id, -0.5)}
+                    <button onClick={() => adjust(ingredient.id, -1)}
                       className="w-7 h-7 rounded-xl font-bold text-sm flex items-center justify-center"
                       style={{ background: 'rgba(220,220,240,0.5)', color: '#6d6d90' }}>−</button>
-                    <span className="text-sm font-extrabold w-14 text-center" style={{ color: '#2d2d4e' }}>{pct.toFixed(1)}%</span>
-                    <button onClick={() => adjust(ingredient.id, +0.5)}
+                    <span className="text-sm font-extrabold w-16 text-center" style={{ color: '#2d2d4e' }}>{pct.toFixed(2)}%</span>
+                    <button onClick={() => adjust(ingredient.id, +1)}
                       className="w-7 h-7 rounded-xl font-bold text-sm flex items-center justify-center text-white"
                       style={{ background: cat.color || '#7B9EFF' }}>+</button>
                   </div>
@@ -446,6 +577,23 @@ function FormulaStep({ l1, l2, l3, formula, onBack, onPctChange, onRemove }) {
           <p className="text-xs font-bold" style={{ color: '#f87171' }}>⚠️ 총 함량이 100%를 초과합니다.</p>
         </div>
       )}
+
+      <div className="fixed bottom-16 left-1/2 -translate-x-1/2 w-full max-w-[480px] px-4 z-20 flex gap-2">
+        <button onClick={handleCopy}
+          className="flex-1 py-3.5 rounded-2xl font-bold text-sm flex items-center justify-center gap-1.5 transition-all active:scale-[0.97]"
+          style={copied
+            ? { background: 'rgba(52,211,153,0.2)', color: '#059669', border: '1.5px solid rgba(52,211,153,0.4)' }
+            : { background: 'rgba(255,255,255,0.85)', color: '#6d6d90', border: '1.5px solid rgba(220,220,240,0.8)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}>
+          {copied ? '✓ 복사됨!' : '📋 복사'}
+        </button>
+        <button onClick={handleSave}
+          className="flex-1 py-3.5 rounded-2xl font-bold text-sm text-white flex items-center justify-center gap-1.5 transition-all active:scale-[0.97]"
+          style={saved
+            ? { background: 'rgba(52,211,153,0.8)', boxShadow: '0 4px 16px rgba(52,211,153,0.3)' }
+            : { background: 'linear-gradient(135deg,#7B9EFF,#C084FC)', boxShadow: '0 4px 20px rgba(123,158,255,0.4)' }}>
+          {saved ? '✓ 저장됨!' : '💾 저장'}
+        </button>
+      </div>
     </div>
   );
 }
@@ -485,7 +633,7 @@ function IngredientModal({ ingredient, onClose, inLab, onToggle }) {
   );
 }
 
-export default function LabTab() {
+export default function LabTab({ savedFormulas, onSaveFormula, onDeleteFormula }) {
   const [step, setStep] = useState(1);
   const [l1, setL1] = useState(null);
   const [l2, setL2] = useState(null);
@@ -498,7 +646,7 @@ export default function LabTab() {
   function handleAdd(ingredient) {
     if (selectedIds.has(ingredient.id)) return;
     const pct = suggestPct(ingredient, l3);
-    setFormula((prev) => [...prev, { ingredient, pct: parseFloat(pct.toFixed(1)) }]);
+    setFormula((prev) => [...prev, { ingredient, pct: parseFloat(pct.toFixed(2)) }]);
   }
   function handleRemove(id) { setFormula((prev) => prev.filter((f) => f.ingredient.id !== id)); }
   function handlePctChange(id, pct) { setFormula((prev) => prev.map((f) => f.ingredient.id === id ? { ...f, pct } : f)); }
@@ -510,7 +658,7 @@ export default function LabTab() {
 
   return (
     <div>
-      {step === 1 && <Step1 onSelect={selectL1} />}
+      {step === 1 && <Step1 onSelect={selectL1} savedFormulas={savedFormulas} onDeleteFormula={onDeleteFormula} />}
       {step === 2 && <Step2 l1={l1} onSelect={selectL2} onBack={reset} />}
       {step === 3 && <Step3 l1={l1} l2={l2} onSelect={selectL3} onBack={() => setStep(2)} />}
       {step === 4 && (
@@ -522,7 +670,8 @@ export default function LabTab() {
       {step === 5 && (
         <FormulaStep l1={l1} l2={l2} l3={l3}
           formula={formula} onBack={() => setStep(4)}
-          onPctChange={handlePctChange} onRemove={handleRemove} />
+          onPctChange={handlePctChange} onRemove={handleRemove}
+          onSaveFormula={onSaveFormula} />
       )}
       <IngredientModal ingredient={modal} onClose={() => setModal(null)}
         inLab={modal ? selectedIds.has(modal.id) : false}

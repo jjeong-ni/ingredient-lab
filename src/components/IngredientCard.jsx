@@ -7,9 +7,20 @@ const safetyInfo = (n) => {
   return       { text: '경고', dot: '#f87171', bg: 'rgba(254,226,226,0.65)', color: '#DC2626' };
 };
 
-function ModalView({ ingredient }) {
+const ANIMAL_KW = ['동물', '닭', '돼지', '양모', '어류', '오리', '계란', '우유', '콜라겐', '케라틴', '라놀린'];
+
+function getOrigin(ingredient) {
+  if (ingredient.tags?.includes('비건')) return { label: '비건', icon: '🌱', color: '#16a34a', bg: '#f0fdf4' };
+  if (ANIMAL_KW.some((k) => (ingredient.extraction || '').includes(k)))
+    return { label: '동물유래', icon: '🐾', color: '#f97316', bg: '#fff7ed' };
+  return null;
+}
+
+function ModalView({ ingredient, isFavorite, onFavoriteToggle }) {
   const cat = CATEGORIES[ingredient.category] || {};
   const safety = safetyInfo(ingredient.safety);
+  const origin = getOrigin(ingredient);
+
   return (
     <div className="px-4 pb-2">
       <div className="rounded-2xl p-4 mb-4 flex items-start gap-3"
@@ -32,9 +43,29 @@ function ModalView({ ingredient }) {
               style={{ background: safety.bg, color: safety.color }}>
               {safety.text}
             </span>
+            {origin && (
+              <span className="text-xs font-bold px-2.5 py-0.5 rounded-xl"
+                style={{ background: origin.bg, color: origin.color }}>
+                {origin.icon} {origin.label}
+              </span>
+            )}
           </div>
-          <h2 className="font-extrabold text-base leading-tight" style={{ color: '#2d2d4e' }}>{ingredient.name}</h2>
-          <p className="text-xs mt-0.5 truncate" style={{ color: '#9999bb' }}>{ingredient.nameEn}</p>
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex-1 min-w-0">
+              <h2 className="font-extrabold text-base leading-tight" style={{ color: '#2d2d4e' }}>{ingredient.name}</h2>
+              <p className="text-xs mt-0.5 truncate" style={{ color: '#9999bb' }}>{ingredient.nameEn}</p>
+            </div>
+            {onFavoriteToggle && (
+              <button
+                onClick={() => onFavoriteToggle(ingredient)}
+                className="flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center transition-all active:scale-90"
+                style={isFavorite
+                  ? { background: 'rgba(251,113,133,0.15)', color: '#fb7185' }
+                  : { background: 'rgba(220,220,240,0.4)', color: '#c0c0d8' }}>
+                <span className="text-lg leading-none">{isFavorite ? '♥' : '♡'}</span>
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
@@ -99,11 +130,12 @@ function ModalView({ ingredient }) {
   );
 }
 
-export default function IngredientCard({ ingredient, onClick, inLab, onLabToggle, modal }) {
+export default function IngredientCard({ ingredient, onClick, inLab, onLabToggle, modal, isFavorite, onFavoriteToggle }) {
   const cat = CATEGORIES[ingredient.category] || {};
   const safety = safetyInfo(ingredient.safety);
+  const origin = getOrigin(ingredient);
 
-  if (modal) return <ModalView ingredient={ingredient} />;
+  if (modal) return <ModalView ingredient={ingredient} isFavorite={isFavorite} onFavoriteToggle={onFavoriteToggle} />;
 
   return (
     <div
@@ -129,11 +161,19 @@ export default function IngredientCard({ ingredient, onClick, inLab, onLabToggle
         <p className="font-bold text-xs leading-tight line-clamp-2 mb-0.5" style={{ color: '#2d2d4e' }}>
           {ingredient.name}
         </p>
-        <p className="text-[9px] truncate mb-1" style={{ color: '#9999bb' }}>{ingredient.nameEn}</p>
-        <span className="inline-block text-[9px] font-bold px-1.5 py-0.5 rounded-lg"
-          style={{ background: 'rgba(255,255,255,0.75)', color: cat.color, border: `1px solid ${cat.color}25` }}>
-          {cat.icon} {cat.label}
-        </span>
+        <p className="text-[11px] truncate mb-1" style={{ color: '#9999bb' }}>{ingredient.nameEn}</p>
+        <div className="flex items-center gap-1 flex-wrap">
+          <span className="inline-block text-[11px] font-bold px-1.5 py-0.5 rounded-lg"
+            style={{ background: 'rgba(255,255,255,0.75)', color: cat.color, border: `1px solid ${cat.color}25` }}>
+            {cat.icon} {cat.label}
+          </span>
+          {origin && (
+            <span className="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded-lg"
+              style={{ background: origin.bg, color: origin.color }}>
+              {origin.icon}
+            </span>
+          )}
+        </div>
       </div>
 
       <div className="px-2.5 pb-2.5 flex justify-end">
