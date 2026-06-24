@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { ingredients, CATEGORIES } from '../data/ingredients';
 import IngredientCard from './IngredientCard';
+import { getOrigin } from '../utils/origin';
 
 const PAGE_SIZE = 60;
 
@@ -90,6 +91,37 @@ function filterIngredients(list, query) {
   });
 }
 
+const ORIGIN_FILTER_OPTIONS = [
+  { val: 'all', label: '전체' },
+  { val: 'vegan', label: '🌱 비건' },
+  { val: 'animal', label: '🐾 동물유래' },
+];
+
+function OriginFilterChips({ value, onChange }) {
+  return (
+    <div className="flex gap-1.5">
+      {ORIGIN_FILTER_OPTIONS.map(({ val, label }) => (
+        <button key={val} onClick={() => onChange(val)}
+          className="px-2.5 py-1 rounded-xl text-xs font-bold transition-all active:scale-95"
+          style={value === val
+            ? {
+                background: val === 'animal' ? '#f97316' : val === 'vegan' ? '#16a34a' : 'linear-gradient(135deg,#7B9EFF,#C084FC)',
+                color: 'white',
+              }
+            : { background: 'rgba(220,220,240,0.5)', color: '#9999bb', border: '1px solid rgba(255,255,255,0.8)' }}>
+          {label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function applyOriginFilter(list, originFilter) {
+  if (originFilter === 'vegan') return list.filter((i) => getOrigin(i)?.label === '비건');
+  if (originFilter === 'animal') return list.filter((i) => getOrigin(i)?.label === '동물유래');
+  return list;
+}
+
 function DictHome({ onSelectCategory, onAllClick, onFavoritesClick, onAnalyzeClick, onSkinConcernClick }) {
   return (
     <div className="px-4 pt-3 pb-4">
@@ -175,11 +207,15 @@ function DictHome({ onSelectCategory, onAllClick, onFavoritesClick, onAnalyzeCli
 
 function DictCategoryView({ categoryKey, onBack, onIngredientClick, labIds, onLabToggle, favorites, onFavoriteToggle }) {
   const cat = CATEGORIES[categoryKey];
-  const list = useMemo(() =>
-    ingredients.filter((i) => i.category === categoryKey)
-      .sort((a, b) => a.name.localeCompare(b.name, 'ko')),
-    [categoryKey]
-  );
+  const [search, setSearch] = useState('');
+  const [originFilter, setOriginFilter] = useState('all');
+
+  const list = useMemo(() => {
+    let result = ingredients.filter((i) => i.category === categoryKey);
+    result = filterIngredients(result, search);
+    result = applyOriginFilter(result, originFilter);
+    return result.sort((a, b) => a.name.localeCompare(b.name, 'ko'));
+  }, [categoryKey, search, originFilter]);
 
   return (
     <div>
@@ -187,7 +223,7 @@ function DictCategoryView({ categoryKey, onBack, onIngredientClick, labIds, onLa
         <button onClick={onBack} className="flex items-center gap-1.5 text-sm font-semibold mb-2" style={{ color: '#9999bb' }}>
           ← 카테고리 목록
         </button>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 mb-2">
           <div className="w-10 h-10 rounded-2xl flex items-center justify-center text-2xl"
             style={{ background: cat.bg || 'rgba(236,232,248,0.5)' }}>
             {cat.icon}
@@ -197,6 +233,18 @@ function DictCategoryView({ categoryKey, onBack, onIngredientClick, labIds, onLa
             <p className="text-xs" style={{ color: '#9999bb' }}>{list.length}종 · {cat.desc}</p>
           </div>
         </div>
+        <div className="relative mb-1.5">
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm" style={{ color: '#9999bb' }}>🔍</span>
+          <input value={search} onChange={(e) => setSearch(e.target.value)}
+            placeholder={`${cat.label} 내 검색...`}
+            className="w-full pl-9 pr-9 py-2 rounded-xl text-sm outline-none"
+            style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(255,255,255,0.85)', color: '#2d2d4e' }} />
+          {search && (
+            <button onClick={() => setSearch('')}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-sm" style={{ color: '#9999bb' }}>✕</button>
+          )}
+        </div>
+        <OriginFilterChips value={originFilter} onChange={setOriginFilter} />
       </div>
 
       <div className="px-4 pt-3 grid grid-cols-2 gap-2 pb-6">
@@ -208,6 +256,12 @@ function DictCategoryView({ categoryKey, onBack, onIngredientClick, labIds, onLa
             isFavorite={favorites.has(ing.id)}
             onFavoriteToggle={onFavoriteToggle} />
         ))}
+        {list.length === 0 && (
+          <div className="col-span-2 flex flex-col items-center py-12 text-center">
+            <p className="font-bold text-sm mb-1" style={{ color: '#2d2d4e' }}>검색 결과가 없어요</p>
+            <p className="text-xs" style={{ color: '#9999bb' }}>다른 조건으로 검색해보세요</p>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -216,11 +270,13 @@ function DictCategoryView({ categoryKey, onBack, onIngredientClick, labIds, onLa
 function DictAllView({ onBack, onIngredientClick, labIds, onLabToggle, favorites, onFavoriteToggle, initialSearch }) {
   const [search, setSearch] = useState(initialSearch || '');
   const [page, setPage] = useState(1);
+  const [originFilter, setOriginFilter] = useState('all');
 
   const sorted = useMemo(() => {
-    return filterIngredients(ingredients, search)
-      .sort((a, b) => a.name.localeCompare(b.name, 'ko'));
-  }, [search]);
+    let list = filterIngredients(ingredients, search);
+    list = applyOriginFilter(list, originFilter);
+    return list.sort((a, b) => a.name.localeCompare(b.name, 'ko'));
+  }, [search, originFilter]);
 
   const totalPages = Math.ceil(sorted.length / PAGE_SIZE);
   const visible = sorted.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -242,6 +298,9 @@ function DictAllView({ onBack, onIngredientClick, labIds, onLabToggle, favorites
               className="absolute right-3 top-1/2 -translate-y-1/2 text-sm" style={{ color: '#9999bb' }}>✕</button>
           )}
         </div>
+        <div className="mb-1.5">
+          <OriginFilterChips value={originFilter} onChange={(v) => { setOriginFilter(v); setPage(1); }} />
+        </div>
         <p className="text-xs" style={{ color: '#9999bb' }}>{sorted.length}종 · ㄱㄴㄷ 정렬</p>
       </div>
 
@@ -254,6 +313,12 @@ function DictAllView({ onBack, onIngredientClick, labIds, onLabToggle, favorites
             isFavorite={favorites.has(ing.id)}
             onFavoriteToggle={onFavoriteToggle} />
         ))}
+        {visible.length === 0 && (
+          <div className="col-span-2 flex flex-col items-center py-12 text-center">
+            <p className="font-bold text-sm mb-1" style={{ color: '#2d2d4e' }}>검색 결과가 없어요</p>
+            <p className="text-xs" style={{ color: '#9999bb' }}>다른 조건으로 검색해보세요</p>
+          </div>
+        )}
       </div>
 
       {totalPages > 1 && (
@@ -273,22 +338,47 @@ function DictAllView({ onBack, onIngredientClick, labIds, onLabToggle, favorites
 }
 
 function DictFavoritesView({ onBack, onIngredientClick, labIds, onLabToggle, favorites, onFavoriteToggle }) {
+  const [copied, setCopied] = useState(false);
   const list = useMemo(() =>
     ingredients.filter((i) => favorites.has(i.id))
       .sort((a, b) => a.name.localeCompare(b.name, 'ko')),
     [favorites]
   );
 
+  async function handleExport() {
+    const text = [
+      '⭐ 즐겨찾기 성분 목록',
+      '─'.repeat(24),
+      ...list.map((i) => `${i.emoji} ${i.name} (${i.nameEn})\n   ${i.function}`),
+    ].join('\n');
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch(e) {}
+  }
+
   return (
     <div>
       <div className="sticky top-0 z-10 px-4 pt-3 pb-2" style={GLASS_HEADER}>
         <button onClick={onBack} className="flex items-center gap-1.5 text-sm font-semibold mb-2" style={{ color: '#9999bb' }}>← 홈</button>
-        <div className="flex items-center gap-2">
-          <span className="text-xl" style={{ color: '#fb7185' }}>♥</span>
-          <div>
-            <h2 className="font-extrabold text-base" style={{ color: '#2d2d4e' }}>즐겨찾기</h2>
-            <p className="text-xs" style={{ color: '#9999bb' }}>{list.length}개 저장됨</p>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-xl" style={{ color: '#fb7185' }}>♥</span>
+            <div>
+              <h2 className="font-extrabold text-base" style={{ color: '#2d2d4e' }}>즐겨찾기</h2>
+              <p className="text-xs" style={{ color: '#9999bb' }}>{list.length}개 저장됨</p>
+            </div>
           </div>
+          {list.length > 0 && (
+            <button onClick={handleExport}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all active:scale-95"
+              style={copied
+                ? { background: 'rgba(52,211,153,0.2)', color: '#059669', border: '1px solid rgba(52,211,153,0.3)' }
+                : { background: 'rgba(219,234,254,0.6)', color: '#7B9EFF', border: '1px solid rgba(186,230,253,0.5)' }}>
+              {copied ? '✓ 복사됨' : '📋 목록 복사'}
+            </button>
+          )}
         </div>
       </div>
 

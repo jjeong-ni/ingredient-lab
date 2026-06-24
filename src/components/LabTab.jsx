@@ -70,7 +70,26 @@ function findSynergies(ids) {
 }
 
 function Step1({ onSelect, savedFormulas, onDeleteFormula, labDictIds }) {
+  const [copiedId, setCopiedId] = useState(null);
   const dictCount = labDictIds?.size || 0;
+
+  async function handleCopyFormula(f) {
+    const total = f.items.reduce((s, i) => s + i.pct, 0);
+    const text = [
+      `${f.icon} ${f.name} (${f.l1Label} · ${f.l2Label})`,
+      `저장일: ${f.createdAt}`,
+      '─'.repeat(24),
+      ...f.items.map((item) => `${item.emoji} ${item.name}: ${item.pct.toFixed(2)}%`),
+      '─'.repeat(24),
+      `총 함량: ${total.toFixed(2)}%`,
+    ].join('\n');
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedId(f.id);
+      setTimeout(() => setCopiedId(null), 2000);
+    } catch(e) {}
+  }
+
   return (
     <div className="px-4 pt-3 pb-6">
       <div className="rounded-2xl p-4 mb-5"
@@ -112,9 +131,18 @@ function Step1({ onSelect, savedFormulas, onDeleteFormula, labDictIds }) {
                     ))}
                   </div>
                 </div>
-                <button onClick={() => onDeleteFormula(f.id)}
-                  className="flex-shrink-0 w-7 h-7 rounded-xl flex items-center justify-center"
-                  style={{ background: 'rgba(248,113,113,0.15)', color: '#f87171' }}>×</button>
+                <div className="flex flex-col gap-1.5 flex-shrink-0">
+                  <button onClick={() => handleCopyFormula(f)}
+                    className="w-7 h-7 rounded-xl flex items-center justify-center text-xs transition-all"
+                    style={copiedId === f.id
+                      ? { background: 'rgba(52,211,153,0.2)', color: '#059669' }
+                      : { background: 'rgba(219,234,254,0.6)', color: '#7B9EFF' }}>
+                    {copiedId === f.id ? '✓' : '📋'}
+                  </button>
+                  <button onClick={() => onDeleteFormula(f.id)}
+                    className="w-7 h-7 rounded-xl flex items-center justify-center"
+                    style={{ background: 'rgba(248,113,113,0.15)', color: '#f87171' }}>×</button>
+                </div>
               </div>
             ))}
           </div>
