@@ -12,19 +12,15 @@ function countByCategory() {
 }
 const categoryCounts = countByCategory();
 
-const GLASS = {
-  background: 'rgba(255,255,255,0.55)',
-  backdropFilter: 'blur(14px)',
-  WebkitBackdropFilter: 'blur(14px)',
-  border: '1px solid rgba(255,255,255,0.82)',
-  boxShadow: '0 2px 16px rgba(140,140,200,0.10)',
+const SURFACE = {
+  background: '#FFFFFF',
+  border: '1px solid #E5E5E5',
+  boxShadow: '0 1px 3px rgba(0,0,0,0.07)',
 };
 
-const GLASS_HEADER = {
-  background: 'rgba(255,255,255,0.70)',
-  backdropFilter: 'blur(20px)',
-  WebkitBackdropFilter: 'blur(20px)',
-  borderBottom: '1px solid rgba(255,255,255,0.90)',
+const STICKY_HEADER = {
+  background: '#FFFFFF',
+  borderBottom: '1px solid #E5E5E5',
 };
 
 const SKIN_CONCERNS = [
@@ -36,23 +32,23 @@ const SKIN_CONCERNS = [
   { icon: '🛡', label: '자외선', query: '자외선' },
   { icon: '🌸', label: '여드름', query: '여드름' },
   { icon: '🔬', label: '각질', query: '각질' },
-  { icon: '🫧', label: '모공', query: '모공' },
+  { icon: '🪷', label: '모공', query: '모공' },
   { icon: '🔴', label: '민감성', query: '민감' },
 ];
 
 const SEARCH_ALIASES = {
-  '비타민c': ['아스코르브', '아스코르빈', 'ascorbic'],
-  '비타민e': ['토코페롤', 'tocopherol'],
-  '비타민a': ['레티놀', '레티닐', 'retinol', 'retinyl'],
-  '레티놀': ['retinol', '비타민a', '레티노'],
+  '비타민 c': ['아스코르브', '아스코르빈', 'ascorbic'],
+  '비타민 e': ['토코페롤', 'tocopherol'],
+  '비타민 a': ['레티롬', '레티닐', 'retinol', 'retinyl'],
+  '레티롬': ['retinol', '비타민 a', '레티노'],
   '히알루론산': ['히아루론', 'hyaluronic', '하이알루로닉'],
-  '나이아신아마이드': ['나이아신아미드', 'niacinamide', '비타민b3'],
-  '판테놀': ['panthenol', '프로비타민b5'],
+  '나이아신아마이드': ['나이아신아미드', 'niacinamide', '비타민 b3'],
+  '판테놀': ['panthenol', '프로비타민 b5'],
   '세라마이드': ['ceramide'],
   '콜라겐': ['collagen'],
-  '펩타이드': ['peptide'],
-  '알부틴': ['arbutin'],
-  'aha': ['글리콜릭', '락틱', 'glycolic', 'lactic'],
+  '펝타이드': ['peptide'],
+  '알부팀': ['arbutin'],
+  'aha': ['글리쾜릭', '낙틱', 'glycolic', 'lactic'],
   'bha': ['살리실릭', 'salicylic'],
   '녹차': ['그린티', 'green tea', '카테킨'],
   '마데카소사이드': ['센텔라', 'centella', '시카'],
@@ -100,18 +96,19 @@ const ORIGIN_FILTER_OPTIONS = [
 function OriginFilterChips({ value, onChange }) {
   return (
     <div className="flex gap-1.5">
-      {ORIGIN_FILTER_OPTIONS.map(({ val, label }) => (
-        <button key={val} onClick={() => onChange(val)}
-          className="px-2.5 py-1 rounded-xl text-xs font-bold transition-all active:scale-95"
-          style={value === val
-            ? {
-                background: val === 'animal' ? '#f97316' : val === 'vegan' ? '#16a34a' : 'linear-gradient(135deg,#7B9EFF,#C084FC)',
-                color: 'white',
-              }
-            : { background: 'rgba(220,220,240,0.5)', color: '#9999bb', border: '1px solid rgba(255,255,255,0.8)' }}>
-          {label}
-        </button>
-      ))}
+      {ORIGIN_FILTER_OPTIONS.map(({ val, label }) => {
+        const active = value === val;
+        const activeBg = val === 'animal' ? '#EA580C' : val === 'vegan' ? '#16a34a' : '#171717';
+        return (
+          <button key={val} onClick={() => onChange(val)}
+            className="px-2.5 py-1 rounded text-xs font-semibold transition-all active:scale-95"
+            style={active
+              ? { background: activeBg, color: 'white' }
+              : { background: '#FFFFFF', color: '#444444', border: '1px solid #E5E5E5' }}>
+            {label}
+          </button>
+        );
+      })}
     </div>
   );
 }
@@ -125,76 +122,62 @@ function applyOriginFilter(list, originFilter) {
 function DictHome({ onSelectCategory, onAllClick, onFavoritesClick, onAnalyzeClick, onSkinConcernClick }) {
   return (
     <div className="px-4 pt-3 pb-4">
-      <div className="rounded-2xl p-4 mb-4 flex items-center gap-3"
-        style={{
-          background: 'linear-gradient(135deg, rgba(123,158,255,0.75) 0%, rgba(192,132,252,0.75) 100%)',
-          backdropFilter: 'blur(14px)',
-          WebkitBackdropFilter: 'blur(14px)',
-          border: '1px solid rgba(255,255,255,0.6)',
-        }}>
+      <div className="rounded-lg p-4 mb-4 flex items-center gap-3"
+        style={{ background: '#171717' }}>
         <span className="text-3xl">🧪</span>
         <div>
-          <p className="font-extrabold text-white text-base leading-tight">성분 사전</p>
-          <p className="text-white/75 text-xs mt-0.5">{ingredients.length}종의 화장품 원료 정보</p>
+          <p className="font-bold text-white text-base leading-tight">성분 사전</p>
+          <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.55)' }}>{ingredients.length}종의 화장품 원료 정보</p>
         </div>
       </div>
 
       <div className="flex gap-2 mb-4">
         <button onClick={onAllClick}
-          className="flex-1 flex flex-col items-center gap-1.5 py-3 rounded-2xl transition-all active:scale-[0.96]"
-          style={{ background: 'rgba(123,158,255,0.12)', border: '1.5px solid rgba(123,158,255,0.25)' }}>
+          className="flex-1 flex flex-col items-center gap-1.5 py-3 rounded-lg transition-all active:scale-[0.96]"
+          style={SURFACE}>
           <span className="text-xl">🔍</span>
-          <span className="text-xs font-bold" style={{ color: '#7B9EFF' }}>전체보기</span>
+          <span className="text-xs font-semibold" style={{ color: '#171717' }}>전체보기</span>
         </button>
         <button onClick={onFavoritesClick}
-          className="flex-1 flex flex-col items-center gap-1.5 py-3 rounded-2xl transition-all active:scale-[0.96]"
-          style={{ background: 'rgba(251,113,133,0.12)', border: '1.5px solid rgba(251,113,133,0.25)' }}>
+          className="flex-1 flex flex-col items-center gap-1.5 py-3 rounded-lg transition-all active:scale-[0.96]"
+          style={SURFACE}>
           <span className="text-xl">♥</span>
-          <span className="text-xs font-bold" style={{ color: '#fb7185' }}>즐겨찾기</span>
+          <span className="text-xs font-semibold" style={{ color: '#171717' }}>즐겨찾기</span>
         </button>
         <button onClick={onAnalyzeClick}
-          className="flex-1 flex flex-col items-center gap-1.5 py-3 rounded-2xl transition-all active:scale-[0.96]"
-          style={{ background: 'rgba(52,211,153,0.12)', border: '1.5px solid rgba(52,211,153,0.25)' }}>
+          className="flex-1 flex flex-col items-center gap-1.5 py-3 rounded-lg transition-all active:scale-[0.96]"
+          style={SURFACE}>
           <span className="text-xl">🔬</span>
-          <span className="text-xs font-bold" style={{ color: '#34d399' }}>성분표분석</span>
+          <span className="text-xs font-semibold" style={{ color: '#171717' }}>성분표분석</span>
         </button>
       </div>
 
-      <p className="text-[10px] font-extrabold uppercase tracking-widest mb-2" style={{ color: '#9999bb' }}>피부 고민별 검색</p>
+      <p className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{ color: '#888888' }}>피부 고민별 검색</p>
       <div className="flex gap-2 overflow-x-auto pb-2.5 mb-3" style={{ scrollbarWidth: 'none' }}>
         {SKIN_CONCERNS.map((c) => (
           <button key={c.query} onClick={() => onSkinConcernClick(c.query)}
-            className="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-2xl transition-all active:scale-95"
-            style={{
-              background: 'rgba(255,255,255,0.7)',
-              border: '1.5px solid rgba(255,255,255,0.9)',
-              boxShadow: '0 2px 10px rgba(140,140,200,0.08)',
-            }}>
-            <span className="text-base leading-none">{c.icon}</span>
-            <span className="text-xs font-bold whitespace-nowrap" style={{ color: '#4d4d70' }}>{c.label}</span>
+            className="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-lg transition-all active:scale-95"
+            style={SURFACE}>
+            <span className="text-sm leading-none">{c.icon}</span>
+            <span className="text-xs font-semibold whitespace-nowrap" style={{ color: '#444444' }}>{c.label}</span>
           </button>
         ))}
       </div>
 
-      <p className="text-[10px] font-extrabold uppercase tracking-widest mb-2.5" style={{ color: '#9999bb' }}>기능별 분류</p>
+      <p className="text-[10px] font-bold uppercase tracking-widest mb-2.5" style={{ color: '#888888' }}>기능별 분류</p>
       <div className="grid grid-cols-2 gap-2.5">
         {Object.entries(CATEGORIES).map(([key, cat]) => {
           const count = categoryCounts[key] || 0;
           return (
             <button key={key} onClick={() => onSelectCategory(key)}
-              className="flex flex-col items-center gap-2 p-4 rounded-2xl transition-all active:scale-[0.96]"
-              style={{
-                background: cat.bg || '#ede8f8',
-                border: '1.5px solid rgba(255,255,255,0.85)',
-                boxShadow: `0 4px 16px ${cat.color}18, inset 0 1px 0 rgba(255,255,255,0.9)`,
-                minHeight: 110
-              }}>
-              <div className="w-11 h-11 rounded-2xl flex items-center justify-center text-2xl"
-                style={{ background: `${cat.color}22` }}>
+              className="flex flex-col items-center gap-2 p-4 rounded-lg transition-all active:scale-[0.96]"
+              style={{ ...SURFACE, minHeight: 110 }}>
+              <div className="w-11 h-11 rounded-lg flex items-center justify-center text-2xl"
+                style={{ background: '#F4F4F5' }}>
                 {cat.icon}
               </div>
               <div className="text-center">
-                <p className="font-bold text-sm leading-tight" style={{ color: '#2d2d4e' }}>{cat.label}</p>
+                <p className="font-semibold text-sm leading-tight" style={{ color: '#171717' }}>{cat.label}</p>
                 <p className="text-[10px] font-semibold mt-0.5" style={{ color: cat.color }}>{count}종</p>
               </div>
             </button>
@@ -219,29 +202,29 @@ function DictCategoryView({ categoryKey, onBack, onIngredientClick, labIds, onLa
 
   return (
     <div>
-      <div className="sticky top-0 z-10 px-4 pt-3 pb-2" style={GLASS_HEADER}>
-        <button onClick={onBack} className="flex items-center gap-1.5 text-sm font-semibold mb-2" style={{ color: '#9999bb' }}>
+      <div className="sticky top-0 z-10 px-4 pt-3 pb-2" style={STICKY_HEADER}>
+        <button onClick={onBack} className="flex items-center gap-1.5 text-sm font-semibold mb-2" style={{ color: '#888888' }}>
           ← 카테고리 목록
         </button>
         <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-2xl flex items-center justify-center text-2xl"
-            style={{ background: cat.bg || 'rgba(236,232,248,0.5)' }}>
+          <div className="w-10 h-10 rounded-lg flex items-center justify-center text-2xl"
+            style={{ background: '#F4F4F5' }}>
             {cat.icon}
           </div>
           <div>
-            <h2 className="font-extrabold text-base" style={{ color: '#2d2d4e' }}>{cat.label}</h2>
-            <p className="text-xs" style={{ color: '#9999bb' }}>{list.length}종 · {cat.desc}</p>
+            <h2 className="font-bold text-base" style={{ color: '#171717' }}>{cat.label}</h2>
+            <p className="text-xs" style={{ color: '#888888' }}>{list.length}종 · {cat.desc}</p>
           </div>
         </div>
         <div className="relative mb-1.5">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm" style={{ color: '#9999bb' }}>🔍</span>
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm" style={{ color: '#888888' }}>🔍</span>
           <input value={search} onChange={(e) => setSearch(e.target.value)}
             placeholder={`${cat.label} 내 검색...`}
-            className="w-full pl-9 pr-9 py-2 rounded-xl text-sm outline-none"
-            style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(255,255,255,0.85)', color: '#2d2d4e' }} />
+            className="w-full pl-9 pr-9 py-2 rounded-md text-sm outline-none"
+            style={{ background: '#FFFFFF', border: '1px solid #E5E5E5', color: '#171717' }} />
           {search && (
             <button onClick={() => setSearch('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-sm" style={{ color: '#9999bb' }}>✕</button>
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-sm" style={{ color: '#888888' }}>✕</button>
           )}
         </div>
         <OriginFilterChips value={originFilter} onChange={setOriginFilter} />
@@ -258,8 +241,8 @@ function DictCategoryView({ categoryKey, onBack, onIngredientClick, labIds, onLa
         ))}
         {list.length === 0 && (
           <div className="col-span-2 flex flex-col items-center py-12 text-center">
-            <p className="font-bold text-sm mb-1" style={{ color: '#2d2d4e' }}>검색 결과가 없어요</p>
-            <p className="text-xs" style={{ color: '#9999bb' }}>다른 조건으로 검색해보세요</p>
+            <p className="font-bold text-sm mb-1" style={{ color: '#171717' }}>검색 결과가 없어요</p>
+            <p className="text-xs" style={{ color: '#888888' }}>다른 조건으로 검색해보세요</p>
           </div>
         )}
       </div>
@@ -283,25 +266,25 @@ function DictAllView({ onBack, onIngredientClick, labIds, onLabToggle, favorites
 
   return (
     <div>
-      <div className="sticky top-0 z-10 px-4 pt-3 pb-2" style={GLASS_HEADER}>
-        <button onClick={onBack} className="flex items-center gap-1.5 text-sm font-semibold mb-2" style={{ color: '#9999bb' }}>
+      <div className="sticky top-0 z-10 px-4 pt-3 pb-2" style={STICKY_HEADER}>
+        <button onClick={onBack} className="flex items-center gap-1.5 text-sm font-semibold mb-2" style={{ color: '#888888' }}>
           ← 카테고리 목록
         </button>
         <div className="relative mb-2">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm" style={{ color: '#9999bb' }}>🔍</span>
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm" style={{ color: '#888888' }}>🔍</span>
           <input value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-            placeholder="성분명, 피부고민, 비타민C 등 검색..."
-            className="w-full pl-9 pr-9 py-2.5 rounded-xl text-sm outline-none"
-            style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(255,255,255,0.85)', color: '#2d2d4e' }} />
+            placeholder="성분명, 피부고민, 비타민 C 등 검색..."
+            className="w-full pl-9 pr-9 py-2.5 rounded-md text-sm outline-none"
+            style={{ background: '#FFFFFF', border: '1px solid #E5E5E5', color: '#171717' }} />
           {search && (
             <button onClick={() => { setSearch(''); setPage(1); }}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-sm" style={{ color: '#9999bb' }}>✕</button>
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-sm" style={{ color: '#888888' }}>✕</button>
           )}
         </div>
         <div className="mb-1.5">
           <OriginFilterChips value={originFilter} onChange={(v) => { setOriginFilter(v); setPage(1); }} />
         </div>
-        <p className="text-xs" style={{ color: '#9999bb' }}>{sorted.length}종 · ㄱㄴㄷ 정렬</p>
+        <p className="text-xs" style={{ color: '#888888' }}>{sorted.length}종 · ㄱㄴㄷ 정렬</p>
       </div>
 
       <div className="px-4 pt-3 grid grid-cols-2 gap-2">
@@ -315,8 +298,8 @@ function DictAllView({ onBack, onIngredientClick, labIds, onLabToggle, favorites
         ))}
         {visible.length === 0 && (
           <div className="col-span-2 flex flex-col items-center py-12 text-center">
-            <p className="font-bold text-sm mb-1" style={{ color: '#2d2d4e' }}>검색 결과가 없어요</p>
-            <p className="text-xs" style={{ color: '#9999bb' }}>다른 조건으로 검색해보세요</p>
+            <p className="font-bold text-sm mb-1" style={{ color: '#171717' }}>검색 결과가 없어요</p>
+            <p className="text-xs" style={{ color: '#888888' }}>다른 조건으로 검색해보세요</p>
           </div>
         )}
       </div>
@@ -324,12 +307,12 @@ function DictAllView({ onBack, onIngredientClick, labIds, onLabToggle, favorites
       {totalPages > 1 && (
         <div className="flex items-center justify-center gap-3 py-6">
           <button disabled={page === 1} onClick={() => setPage(p => p - 1)}
-            className="w-10 h-10 rounded-xl font-bold disabled:opacity-30"
-            style={{ ...GLASS, color: '#2d2d4e' }}>←</button>
-          <span className="text-sm font-bold" style={{ color: '#6d6d90' }}>{page} / {totalPages}</span>
+            className="w-10 h-10 rounded-md font-bold disabled:opacity-30"
+            style={{ ...SURFACE, color: '#171717' }}>←</button>
+          <span className="text-sm font-bold" style={{ color: '#444444' }}>{page} / {totalPages}</span>
           <button disabled={page === totalPages} onClick={() => setPage(p => p + 1)}
-            className="w-10 h-10 rounded-xl font-bold disabled:opacity-30"
-            style={{ ...GLASS, color: '#2d2d4e' }}>→</button>
+            className="w-10 h-10 rounded-md font-bold disabled:opacity-30"
+            style={{ ...SURFACE, color: '#171717' }}>→</button>
         </div>
       )}
       <div className="h-6" />
@@ -360,22 +343,22 @@ function DictFavoritesView({ onBack, onIngredientClick, labIds, onLabToggle, fav
 
   return (
     <div>
-      <div className="sticky top-0 z-10 px-4 pt-3 pb-2" style={GLASS_HEADER}>
-        <button onClick={onBack} className="flex items-center gap-1.5 text-sm font-semibold mb-2" style={{ color: '#9999bb' }}>← 홈</button>
+      <div className="sticky top-0 z-10 px-4 pt-3 pb-2" style={STICKY_HEADER}>
+        <button onClick={onBack} className="flex items-center gap-1.5 text-sm font-semibold mb-2" style={{ color: '#888888' }}>← 홈</button>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-xl" style={{ color: '#fb7185' }}>♥</span>
+            <span className="text-xl" style={{ color: '#E11D48' }}>♥</span>
             <div>
-              <h2 className="font-extrabold text-base" style={{ color: '#2d2d4e' }}>즐겨찾기</h2>
-              <p className="text-xs" style={{ color: '#9999bb' }}>{list.length}개 저장됨</p>
+              <h2 className="font-bold text-base" style={{ color: '#171717' }}>즐겨찾기</h2>
+              <p className="text-xs" style={{ color: '#888888' }}>{list.length}개 저장됨</p>
             </div>
           </div>
           {list.length > 0 && (
             <button onClick={handleExport}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all active:scale-95"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all active:scale-95"
               style={copied
-                ? { background: 'rgba(52,211,153,0.2)', color: '#059669', border: '1px solid rgba(52,211,153,0.3)' }
-                : { background: 'rgba(219,234,254,0.6)', color: '#7B9EFF', border: '1px solid rgba(186,230,253,0.5)' }}>
+                ? { background: '#F0FDF4', color: '#15803D', border: '1px solid #BBF7D0' }
+                : { background: '#FFFFFF', color: '#444444', border: '1px solid #E5E5E5' }}>
               {copied ? '✓ 복사됨' : '📋 목록 복사'}
             </button>
           )}
@@ -384,9 +367,9 @@ function DictFavoritesView({ onBack, onIngredientClick, labIds, onLabToggle, fav
 
       {list.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 px-8 text-center">
-          <span className="text-5xl mb-4" style={{ color: '#e0dff0' }}>♡</span>
-          <p className="font-bold text-base mb-1" style={{ color: '#2d2d4e' }}>즐겨찾기가 없어요</p>
-          <p className="text-sm" style={{ color: '#9999bb' }}>성분 상세에서 ♡를 눌러 저장하세요</p>
+          <span className="text-5xl mb-4" style={{ color: '#E5E5E5' }}>♡</span>
+          <p className="font-bold text-base mb-1" style={{ color: '#171717' }}>즐겨찾기가 없어요</p>
+          <p className="text-sm" style={{ color: '#888888' }}>성분 상세에서 ♡를 눈러 저장하세요</p>
         </div>
       ) : (
         <div className="px-4 pt-3 grid grid-cols-2 gap-2 pb-6">
@@ -436,13 +419,13 @@ function DictAnalyzeView({ onBack, onIngredientClick, labIds, onLabToggle, favor
 
   return (
     <div>
-      <div className="sticky top-0 z-10 px-4 pt-3 pb-2" style={GLASS_HEADER}>
-        <button onClick={onBack} className="flex items-center gap-1.5 text-sm font-semibold mb-2" style={{ color: '#9999bb' }}>← 홈</button>
+      <div className="sticky top-0 z-10 px-4 pt-3 pb-2" style={STICKY_HEADER}>
+        <button onClick={onBack} className="flex items-center gap-1.5 text-sm font-semibold mb-2" style={{ color: '#888888' }}>← 홈</button>
         <div className="flex items-center gap-2">
           <span className="text-xl">🔬</span>
           <div>
-            <h2 className="font-extrabold text-base" style={{ color: '#2d2d4e' }}>성분표 분석</h2>
-            <p className="text-xs" style={{ color: '#9999bb' }}>성분표를 붙여넣으면 성분을 찾아드려요</p>
+            <h2 className="font-bold text-base" style={{ color: '#171717' }}>성분표 분석</h2>
+            <p className="text-xs" style={{ color: '#888888' }}>성분표를 붙여넣으면 성분을 찾아드려요</p>
           </div>
         </div>
       </div>
@@ -453,18 +436,18 @@ function DictAnalyzeView({ onBack, onIngredientClick, labIds, onLabToggle, favor
           onChange={(e) => setInputText(e.target.value)}
           placeholder={"성분표를 붙여넣으세요\n예) Water, Glycerin, Niacinamide..."}
           rows={6}
-          className="w-full p-3.5 rounded-2xl text-sm outline-none resize-none"
+          className="w-full p-3.5 rounded-lg text-sm outline-none resize-none"
           style={{
-            background: 'rgba(255,255,255,0.6)',
-            border: '1.5px solid rgba(255,255,255,0.85)',
-            color: '#2d2d4e',
+            background: '#FFFFFF',
+            border: '1px solid #E5E5E5',
+            color: '#171717',
             lineHeight: 1.6,
           }}
         />
         <button
           onClick={analyze}
-          className="w-full mt-3 py-3.5 rounded-2xl font-extrabold text-sm text-white transition-all active:scale-[0.97]"
-          style={{ background: 'linear-gradient(135deg,#34d399,#059669)', boxShadow: '0 4px 16px rgba(52,211,153,0.35)' }}>
+          className="w-full mt-3 py-3.5 rounded-lg font-bold text-sm text-white transition-all active:scale-[0.97]"
+          style={{ background: '#171717' }}>
           🔬 성분 분석하기
         </button>
 
@@ -472,7 +455,7 @@ function DictAnalyzeView({ onBack, onIngredientClick, labIds, onLabToggle, favor
           <div className="mt-5 space-y-4">
             {results.found.length > 0 && (
               <div>
-                <p className="text-[10px] font-extrabold uppercase tracking-widest mb-2.5" style={{ color: '#34d399' }}>
+                <p className="text-[10px] font-bold uppercase tracking-widest mb-2.5" style={{ color: '#15803D' }}>
                   ✓ 데이터베이스에서 {results.found.length}개 발견
                 </p>
                 <div className="grid grid-cols-2 gap-2">
@@ -489,13 +472,13 @@ function DictAnalyzeView({ onBack, onIngredientClick, labIds, onLabToggle, favor
             )}
             {results.notFound.length > 0 && (
               <div>
-                <p className="text-[10px] font-extrabold uppercase tracking-widest mb-2" style={{ color: '#9999bb' }}>
+                <p className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{ color: '#888888' }}>
                   미매칭 성분 ({results.notFound.length}개)
                 </p>
                 <div className="flex flex-wrap gap-1.5">
                   {results.notFound.map((t, i) => (
-                    <span key={i} className="text-xs px-2.5 py-1 rounded-xl"
-                      style={{ background: 'rgba(220,220,240,0.4)', color: '#9999bb', border: '1px solid rgba(255,255,255,0.8)' }}>
+                    <span key={i} className="text-xs px-2.5 py-1 rounded"
+                      style={{ background: '#F4F4F5', color: '#888888', border: '1px solid #E5E5E5' }}>
                       {t}
                     </span>
                   ))}
@@ -503,7 +486,7 @@ function DictAnalyzeView({ onBack, onIngredientClick, labIds, onLabToggle, favor
               </div>
             )}
             {results.found.length === 0 && results.notFound.length === 0 && (
-              <p className="text-sm text-center" style={{ color: '#9999bb' }}>성분을 인식하지 못했어요. 쉼표나 줄바꿈으로 구분해주세요.</p>
+              <p className="text-sm text-center" style={{ color: '#888888' }}>성분을 인식하지 못했어요. 쉼표나 줄바꾸으로 구분해주세요.</p>
             )}
           </div>
         )}
@@ -516,30 +499,25 @@ function IngredientModal({ ingredient, onClose, inLab, onLabToggle, isFavorite, 
   if (!ingredient) return null;
   return (
     <div className="fixed inset-0 z-50 flex flex-col justify-end"
-      style={{ background: 'rgba(30,20,60,0.35)' }}
+      style={{ background: 'rgba(0,0,0,0.4)' }}
       onClick={onClose}>
-      <div className="rounded-t-3xl max-w-[480px] w-full mx-auto max-h-[85vh] flex flex-col"
-        style={{
-          background: 'rgba(255,255,255,0.88)',
-          backdropFilter: 'blur(24px)',
-          WebkitBackdropFilter: 'blur(24px)',
-          border: '1px solid rgba(255,255,255,0.95)',
-        }}
+      <div className="rounded-t-2xl max-w-[480px] w-full mx-auto max-h-[85vh] flex flex-col"
+        style={{ background: '#FFFFFF', border: '1px solid #E5E5E5', borderBottom: 'none' }}
         onClick={(e) => e.stopPropagation()}>
         <div className="flex-shrink-0 pt-3 pb-2 px-4">
-          <div className="w-10 h-1 rounded-full mx-auto" style={{ background: 'rgba(180,180,210,0.5)' }} />
+          <div className="w-10 h-1 rounded-full mx-auto" style={{ background: '#E5E5E5' }} />
         </div>
         <div className="overflow-y-auto flex-1 pb-4">
           <IngredientCard ingredient={ingredient} modal isFavorite={isFavorite} onFavoriteToggle={onFavoriteToggle} />
         </div>
         <div className="flex-shrink-0 px-4 pb-6 pt-2 flex gap-2"
-          style={{ borderTop: '1px solid rgba(220,220,240,0.4)' }}>
+          style={{ borderTop: '1px solid #E5E5E5' }}>
           <button onClick={onClose}
-            className="flex-1 py-3 rounded-2xl font-bold text-sm"
-            style={{ background: 'rgba(220,220,240,0.5)', color: '#6d6d90' }}>닫기</button>
+            className="flex-1 py-3 rounded-lg font-semibold text-sm"
+            style={{ background: '#F4F4F5', color: '#444444' }}>닫기</button>
           <button onClick={() => { onLabToggle(ingredient); onClose(); }}
-            className="flex-1 py-3 rounded-2xl font-bold text-sm text-white"
-            style={{ background: inLab ? '#f87171' : 'linear-gradient(135deg,#7B9EFF,#C084FC)' }}>
+            className="flex-1 py-3 rounded-lg font-bold text-sm text-white"
+            style={{ background: inLab ? '#DC2626' : '#0072F5' }}>
             {inLab ? '실험실 제거' : '실험실 추가 +'}
           </button>
         </div>
