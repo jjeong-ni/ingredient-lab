@@ -10,8 +10,8 @@ const safetyInfo = (n) => {
 
 const CARD = {
   background: '#FFFFFF',
-  border: '1px solid #E5E5E5',
-  boxShadow: '0 1px 3px rgba(0,0,0,0.07)',
+  border: '1px solid #EBEBEB',
+  boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
 };
 
 function ModalView({ ingredient, isFavorite, onFavoriteToggle }) {
@@ -20,103 +20,113 @@ function ModalView({ ingredient, isFavorite, onFavoriteToggle }) {
   const origin = getOrigin(ingredient);
 
   return (
-    <div className="px-4 pb-2">
-      <div className="rounded-lg p-4 mb-4 flex items-start gap-3" style={CARD}>
-        <div className="w-14 h-14 rounded-lg flex items-center justify-center text-3xl flex-shrink-0"
-          style={{ background: '#F4F4F5' }}>
-          {ingredient.emoji}
+    <div>
+      {/* Hero */}
+      <div className="flex flex-col items-center pt-8 pb-7 px-6 relative"
+        style={{ background: '#F8F8F8' }}>
+        <div className="relative mb-4">
+          <div className="w-24 h-24 rounded-3xl flex items-center justify-center"
+            style={{ background: '#FFFFFF', boxShadow: '0 4px 24px rgba(0,0,0,0.09)', fontSize: 48 }}>
+            {ingredient.emoji}
+          </div>
+          {onFavoriteToggle && (
+            <button onClick={() => onFavoriteToggle(ingredient)}
+              className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full flex items-center justify-center"
+              style={isFavorite
+                ? { background: '#FFF1F2', color: '#E11D48', boxShadow: '0 0 0 2px #FFFFFF' }
+                : { background: '#F4F4F5', color: '#CCCCCC', boxShadow: '0 0 0 2px #FFFFFF' }}>
+              <span style={{ fontSize: 14 }}>{isFavorite ? '♥' : '♡'}</span>
+            </button>
+          )}
         </div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-1.5 mb-1.5 flex-wrap">
-            <span className="text-xs font-semibold px-2 py-0.5 rounded"
-              style={{ background: '#F4F4F5', color: '#444444' }}>
-              {cat.icon} {cat.label}
+
+        <h2 style={{ fontWeight: 800, fontSize: 20, color: '#171717', textAlign: 'center', lineHeight: 1.3, marginBottom: 4 }}>
+          {ingredient.name}
+        </h2>
+        <p style={{ fontSize: 13, color: '#999999', textAlign: 'center', marginBottom: 16 }}>{ingredient.nameEn}</p>
+
+        <div className="flex items-center gap-2 flex-wrap justify-center">
+          <span style={{ fontSize: 12, fontWeight: 700, padding: '6px 14px', borderRadius: 99, background: '#EBEBEB', color: '#555555' }}>
+            {cat.icon} {cat.label}
+          </span>
+          <span style={{ fontSize: 12, fontWeight: 700, padding: '6px 14px', borderRadius: 99, background: safety.bg, color: safety.color }}>
+            {safety.text}
+          </span>
+          {origin && (
+            <span style={{ fontSize: 12, fontWeight: 700, padding: '6px 14px', borderRadius: 99, background: origin.bg, color: origin.color }}>
+              {origin.icon} {origin.label}
             </span>
-            <span className="text-xs font-semibold px-2 py-0.5 rounded"
-              style={{ background: safety.bg, color: safety.color }}>
-              {safety.text}
-            </span>
-            {origin && (
-              <span className="text-xs font-semibold px-2 py-0.5 rounded"
-                style={{ background: origin.bg, color: origin.color }}>
-                {origin.icon} {origin.label}
-              </span>
-            )}
-          </div>
-          <div className="flex items-start justify-between gap-2">
-            <div className="flex-1 min-w-0">
-              <h2 className="font-bold text-base leading-tight" style={{ color: '#171717' }}>{ingredient.name}</h2>
-              <p className="text-xs mt-0.5 truncate" style={{ color: '#888888' }}>{ingredient.nameEn}</p>
-            </div>
-            {onFavoriteToggle && (
-              <button
-                onClick={() => onFavoriteToggle(ingredient)}
-                className="flex-shrink-0 w-8 h-8 rounded-md flex items-center justify-center"
-                style={isFavorite
-                  ? { background: '#FFF1F2', color: '#E11D48' }
-                  : { background: '#F4F4F5', color: '#888888' }}>
-                <span className="text-base leading-none">{isFavorite ? '♥' : '♡'}</span>
-              </button>
-            )}
-          </div>
+          )}
         </div>
       </div>
 
-      <div className="space-y-3.5">
-        <InfoRow label="기능" value={ingredient.function} />
-        <InfoRow label="추출원" value={ingredient.extraction} />
+      {/* Content */}
+      <div style={{ padding: '24px 24px 8px', display: 'flex', flexDirection: 'column', gap: 24 }}>
+        <Section label="기능">
+          <p style={{ fontSize: 14, lineHeight: 1.7, color: '#333333' }}>{ingredient.function}</p>
+        </Section>
 
-        <div>
-          <SectionLabel>해결 피부 고민</SectionLabel>
-          <div className="flex flex-wrap gap-1.5 mt-1.5">
+        {ingredient.extraction && (
+          <Section label="추출원">
+            <p style={{ fontSize: 14, lineHeight: 1.7, color: '#333333' }}>{ingredient.extraction}</p>
+          </Section>
+        )}
+
+        <Section label="해결 피부 고민">
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 4 }}>
             {ingredient.painPoints.map((p) => (
-              <span key={p} className="text-xs px-2 py-1 rounded font-medium"
-                style={{ background: '#F4F4F5', color: '#444444', border: '1px solid #E5E5E5' }}>
+              <span key={p} style={{ fontSize: 12, fontWeight: 600, padding: '6px 14px', borderRadius: 99, background: '#F2F2F2', color: '#444444' }}>
                 {p}
               </span>
             ))}
           </div>
-        </div>
+        </Section>
 
         {ingredient.tags?.length > 0 && (
-          <div>
-            <SectionLabel>키워드</SectionLabel>
-            <div className="flex flex-wrap gap-1.5 mt-1.5">
+          <Section label="키워드">
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 4 }}>
               {ingredient.tags.map((t) => (
-                <span key={t} className="text-xs px-2 py-1 rounded"
-                  style={{ background: '#F4F4F5', color: '#888888' }}>
+                <span key={t} style={{ fontSize: 12, padding: '5px 12px', borderRadius: 99, background: '#FAFAFA', color: '#888888', border: '1px solid #EBEBEB' }}>
                   #{t}
                 </span>
               ))}
             </div>
-          </div>
+          </Section>
         )}
 
-        <div className="grid grid-cols-2 gap-2">
-          <div className="rounded-md p-3" style={CARD}>
-            <p className="text-xs mb-1" style={{ color: '#888888' }}>권장 농도</p>
-            <p className="font-bold text-sm" style={{ color: '#171717' }}>{ingredient.concentration}</p>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+          <div style={{ borderRadius: 16, padding: '16px 16px', background: '#F8F8F8' }}>
+            <p style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#AAAAAA', marginBottom: 10 }}>권장 농도</p>
+            <p style={{ fontWeight: 800, fontSize: 15, color: '#171717' }}>{ingredient.concentration}</p>
           </div>
-          <div className="rounded-md p-3" style={{ background: safety.bg, border: '1px solid #E5E5E5' }}>
-            <p className="text-xs mb-1.5" style={{ color: safety.color }}>안전도</p>
-            <div className="flex gap-0.5 mb-1">
+          <div style={{ borderRadius: 16, padding: '16px 16px', background: safety.bg }}>
+            <p style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: safety.color, marginBottom: 10 }}>안전도</p>
+            <div style={{ display: 'flex', gap: 4, marginBottom: 8 }}>
               {[1,2,3,4,5].map((i) => (
-                <div key={i} className="flex-1 h-1.5 rounded-full"
-                  style={{ background: i <= ingredient.safety ? safety.dot : '#E5E5E5' }} />
+                <div key={i} style={{ flex: 1, height: 8, borderRadius: 99, background: i <= ingredient.safety ? safety.dot : 'rgba(0,0,0,0.08)' }} />
               ))}
             </div>
-            <p className="font-bold text-xs" style={{ color: safety.color }}>{safety.text}</p>
+            <p style={{ fontWeight: 800, fontSize: 14, color: safety.color }}>{safety.text}</p>
           </div>
         </div>
 
         {ingredient.tip && (
-          <div className="rounded-md p-3.5" style={{ background: '#FFFBEB', border: '1px solid #FDE68A' }}>
-            <p className="text-xs text-amber-700 leading-relaxed">
-              <span className="font-bold">💡 </span>{ingredient.tip}
+          <div style={{ borderRadius: 16, padding: '16px 18px', background: '#FFFBEB', border: '1px solid #FDE68A' }}>
+            <p style={{ fontSize: 13, color: '#92400E', lineHeight: 1.7 }}>
+              <span style={{ fontWeight: 800 }}>💡 </span>{ingredient.tip}
             </p>
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+function Section({ label, children }) {
+  return (
+    <div>
+      <p style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#AAAAAA', marginBottom: 10 }}>{label}</p>
+      {children}
     </div>
   );
 }
@@ -131,62 +141,45 @@ export default function IngredientCard({ ingredient, onClick, inLab, onLabToggle
   return (
     <div
       onClick={() => onClick?.(ingredient)}
-      className="cursor-pointer rounded-lg overflow-hidden flex flex-col relative"
-      style={{ ...CARD, minHeight: 138 }}
+      className="cursor-pointer rounded-xl overflow-hidden flex flex-col relative"
+      style={{ ...CARD, minHeight: 148 }}
     >
       <div className="absolute top-2 right-2 z-10">
-        <div className="w-1.5 h-1.5 rounded-full" style={{ background: safety.dot }} />
+        <div className="w-2 h-2 rounded-full" style={{ background: safety.dot }} />
       </div>
 
-      <div className="flex items-center justify-center pt-4 pb-2.5 flex-shrink-0"
-        style={{ background: '#F4F4F5' }}>
-        <span className="text-3xl leading-none select-none">{ingredient.emoji}</span>
+      <div className="flex items-center justify-center pt-5 pb-3 flex-shrink-0"
+        style={{ background: '#F6F6F6' }}>
+        <span style={{ fontSize: 36, lineHeight: 1 }}>{ingredient.emoji}</span>
       </div>
 
-      <div className="flex-1 px-2.5 pt-2 pb-1">
-        <p className="font-semibold text-xs leading-tight line-clamp-2 mb-0.5" style={{ color: '#171717' }}>
+      <div className="flex-1 px-3 pt-2.5 pb-1">
+        <p style={{ fontWeight: 700, fontSize: 12, lineHeight: 1.35, marginBottom: 2, color: '#171717' }}
+          className="line-clamp-2">
           {ingredient.name}
         </p>
-        <p className="text-[11px] truncate mb-1" style={{ color: '#888888' }}>{ingredient.nameEn}</p>
+        <p style={{ fontSize: 11, color: '#AAAAAA', marginBottom: 6 }} className="truncate">{ingredient.nameEn}</p>
         <div className="flex items-center gap-1 flex-wrap">
-          <span className="inline-block text-[11px] font-medium px-1.5 py-0.5 rounded"
-            style={{ background: '#F4F4F5', color: '#444444' }}>
+          <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 7px', borderRadius: 99, background: '#F2F2F2', color: '#555555' }}>
             {cat.icon} {cat.label}
           </span>
           {origin && (
-            <span className="inline-block text-[10px] font-medium px-1.5 py-0.5 rounded"
-              style={{ background: origin.bg, color: origin.color }}>
+            <span style={{ fontSize: 10, fontWeight: 600, padding: '2px 7px', borderRadius: 99, background: origin.bg, color: origin.color }}>
               {origin.icon}
             </span>
           )}
         </div>
       </div>
 
-      <div className="px-2.5 pb-2.5 flex justify-end">
+      <div className="px-3 pb-3 flex justify-end">
         <button
           onClick={(e) => { e.stopPropagation(); onLabToggle?.(ingredient); }}
-          className="w-6 h-6 rounded flex items-center justify-center flex-shrink-0"
           style={inLab
-            ? { background: '#0072F5', color: 'white' }
-            : { background: '#F4F4F5', color: '#888888', border: '1px solid #E5E5E5' }}>
-          <span className="text-xs font-bold leading-none">{inLab ? '✓' : '+'}</span>
+            ? { width: 26, height: 26, borderRadius: 8, background: '#0072F5', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, flexShrink: 0 }
+            : { width: 26, height: 26, borderRadius: 8, background: '#F2F2F2', color: '#999999', border: '1px solid #E5E5E5', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, flexShrink: 0 }}>
+          {inLab ? '✓' : '+'}
         </button>
       </div>
     </div>
-  );
-}
-
-function InfoRow({ label, value }) {
-  return (
-    <div>
-      <SectionLabel>{label}</SectionLabel>
-      <p className="text-sm leading-relaxed mt-1" style={{ color: '#444444' }}>{value}</p>
-    </div>
-  );
-}
-
-function SectionLabel({ children }) {
-  return (
-    <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: '#888888' }}>{children}</p>
   );
 }

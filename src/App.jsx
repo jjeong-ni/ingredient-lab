@@ -9,9 +9,9 @@ const NAV = [
     icon: (active) => (
       <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
         <rect x="3" y="3" width="18" height="18" rx="3"
-          stroke={active ? '#0072F5' : '#888888'} strokeWidth="2" />
+          stroke={active ? '#0072F5' : '#BBBBBB'} strokeWidth="2" />
         <path d="M7 8h10M7 12h10M7 16h6"
-          stroke={active ? '#0072F5' : '#888888'} strokeWidth="2" strokeLinecap="round" />
+          stroke={active ? '#0072F5' : '#BBBBBB'} strokeWidth="2" strokeLinecap="round" />
       </svg>
     ),
   },
@@ -20,7 +20,7 @@ const NAV = [
     icon: (active) => (
       <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
         <path d="M9 3h6M10 3v6l-4 8a2 2 0 001.8 2.9h8.4A2 2 0 0018 17l-4-8V3"
-          stroke={active ? '#0072F5' : '#888888'} strokeWidth="2"
+          stroke={active ? '#0072F5' : '#BBBBBB'} strokeWidth="2"
           strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     ),
@@ -36,7 +36,7 @@ export default function App() {
     catch { return new Set(); }
   });
   const [savedFormulas, setSavedFormulas] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('savedFormulas') || '[]'); }
+    try { return JSON.parse(localStorage.getItem('savedFormulas') || '[]')); }
     catch { return []; }
   });
 
@@ -81,15 +81,15 @@ export default function App() {
   }, []);
 
   return (
-    <div className="min-h-screen" style={{ fontFamily: "'Geist Sans', 'Pretendard', -apple-system, system-ui, sans-serif", background: '#FAFAFA' }}>
+    <div className="min-h-screen" style={{ fontFamily: "'Nunito Variable', 'Nunito', -apple-system, system-ui, sans-serif", background: '#FAFAFA' }}>
       <div className="max-w-[480px] mx-auto min-h-screen flex flex-col">
         <header className="flex-shrink-0 px-5 pt-4 pb-3 flex items-center justify-between"
           style={{ background: '#FFFFFF', borderBottom: '1px solid #E5E5E5' }}>
           <div className="flex items-center gap-2">
             <span className="text-xl">🧪</span>
-            <span className="font-bold tracking-tight" style={{ color: '#171717', fontSize: 17 }}>성분 LAB</span>
+            <span style={{ color: '#171717', fontSize: 17, fontWeight: 800 }}>성분 LAB</span>
           </div>
-          <span className="text-xs font-medium" style={{ color: '#888888' }}>
+          <span className="text-xs" style={{ color: '#BBBBBB', fontWeight: 600 }}>
             {tab === 'dict' ? '성분 사전' : '실험실'}
           </span>
         </header>
@@ -126,12 +126,12 @@ export default function App() {
                       style={{ background: '#0072F5' }} />
                   )}
                   {n.icon(active)}
-                  <span className="text-[10px] font-semibold" style={{ color: active ? '#0072F5' : '#888888' }}>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: active ? '#0072F5' : '#BBBBBB' }}>
                     {n.label}
                   </span>
                   {n.id === 'lab' && labIngredientIds.size > 0 && (
-                    <span className="absolute top-1.5 right-8 w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold text-white"
-                      style={{ background: '#0072F5' }}>
+                    <span className="absolute top-1.5 right-8 w-4 h-4 rounded-full flex items-center justify-center text-white"
+                      style={{ background: '#0072F5', fontSize: 9, fontWeight: 700 }}>
                       {labIngredientIds.size}
                     </span>
                   )}
