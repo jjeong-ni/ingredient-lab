@@ -369,7 +369,7 @@ function DictFavoritesView({ onBack, onIngredientClick, labIds, onLabToggle, fav
         <div className="flex flex-col items-center justify-center py-16 px-8 text-center">
           <span className="text-5xl mb-4" style={{ color: '#E5E5E5' }}>♡</span>
           <p className="font-bold text-base mb-1" style={{ color: '#171717' }}>즐겨찾기가 없어요</p>
-          <p className="text-sm" style={{ color: '#888888' }}>성분 상세에서 ♡를 눈러 저장하세요</p>
+          <p className="text-sm" style={{ color: '#888888' }}>성분 상세에서 ♡를 눌러 저장하세요</p>
         </div>
       ) : (
         <div className="px-4 pt-3 grid grid-cols-2 gap-2 pb-6">
@@ -486,7 +486,7 @@ function DictAnalyzeView({ onBack, onIngredientClick, labIds, onLabToggle, favor
               </div>
             )}
             {results.found.length === 0 && results.notFound.length === 0 && (
-              <p className="text-sm text-center" style={{ color: '#888888' }}>성분을 인식하지 못했어요. 쉼표나 줄바꾸으로 구분해주세요.</p>
+              <p className="text-sm text-center" style={{ color: '#888888' }}>성분을 인식하지 못했어요. 쉼표나 줄바꿈으로 구분해주세요.</p>
             )}
           </div>
         )}
@@ -498,25 +498,22 @@ function DictAnalyzeView({ onBack, onIngredientClick, labIds, onLabToggle, favor
 function IngredientModal({ ingredient, onClose, inLab, onLabToggle, isFavorite, onFavoriteToggle }) {
   if (!ingredient) return null;
   return (
-    <div className="fixed inset-0 z-50 flex flex-col justify-end"
-      style={{ background: 'rgba(0,0,0,0.4)' }}
+    <div className="fixed inset-0 z-50 flex items-center justify-center px-4"
+      style={{ background: 'rgba(0,0,0,0.5)' }}
       onClick={onClose}>
-      <div className="rounded-t-2xl max-w-[480px] w-full mx-auto max-h-[85vh] flex flex-col"
-        style={{ background: '#FFFFFF', border: '1px solid #E5E5E5', borderBottom: 'none' }}
+      <div className="relative rounded-2xl w-full max-w-[400px] max-h-[88vh] flex flex-col overflow-hidden"
+        style={{ background: '#FFFFFF', boxShadow: '0 24px 80px rgba(0,0,0,0.18)' }}
         onClick={(e) => e.stopPropagation()}>
-        <div className="flex-shrink-0 pt-3 pb-2 px-4">
-          <div className="w-10 h-1 rounded-full mx-auto" style={{ background: '#E5E5E5' }} />
-        </div>
-        <div className="overflow-y-auto flex-1 pb-4">
+        <button onClick={onClose}
+          className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full flex items-center justify-center"
+          style={{ background: '#FFFFFF', color: '#666666', boxShadow: '0 2px 8px rgba(0,0,0,0.12)' }}>✕</button>
+        <div className="overflow-y-auto flex-1">
           <IngredientCard ingredient={ingredient} modal isFavorite={isFavorite} onFavoriteToggle={onFavoriteToggle} />
         </div>
-        <div className="flex-shrink-0 px-4 pb-6 pt-2 flex gap-2"
-          style={{ borderTop: '1px solid #E5E5E5' }}>
-          <button onClick={onClose}
-            className="flex-1 py-3 rounded-lg font-semibold text-sm"
-            style={{ background: '#F4F4F5', color: '#444444' }}>닫기</button>
+        <div className="flex-shrink-0 px-5 pb-5 pt-3"
+          style={{ borderTop: '1px solid #F0F0F0' }}>
           <button onClick={() => { onLabToggle(ingredient); onClose(); }}
-            className="flex-1 py-3 rounded-lg font-bold text-sm text-white"
+            className="w-full py-3.5 rounded-xl font-bold text-sm text-white"
             style={{ background: inLab ? '#DC2626' : '#0072F5' }}>
             {inLab ? '실험실 제거' : '실험실 추가 +'}
           </button>

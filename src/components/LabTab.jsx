@@ -77,7 +77,7 @@ function Step1({ onSelect, savedFormulas, onDeleteFormula, labDictIds }) {
       '─'.repeat(24),
       ...f.items.map((item) => `${item.emoji} ${item.name}: ${item.pct.toFixed(2)}%`),
       '─'.repeat(24),
-      `종 함량: ${total.toFixed(2)}%`,
+      `총 함량: ${total.toFixed(2)}%`,
     ].join('\n');
     try {
       await navigator.clipboard.writeText(text);
@@ -333,15 +333,15 @@ function FormulaGuideDrawer({ l3, onClose }) {
   const defaults = l3.defaults || {};
   const entries = Object.entries(defaults).sort((a, b) => b[1] - a[1]);
   const roleNote = {
-    base: '제형의 기본 베이스 (정제수, 글리쾜)',
+    base: '제형의 기본 베이스 (정제수, 글리세린)',
     emollient: '제형에 유연성·유분감 부여',
-    moisturizing: '수분 보유·흥습 역할',
+    moisturizing: '수분 보유·흡습 역할',
     surfactant: '세정·유화 (세안제에서 핵심)',
     thickener: '점도·텍스처 조절',
     preservative: '미생물 억제, 제품 안정화',
     antioxidant: '산화 방지, 원료 안정화',
     phadjuster: '제품 pH 범위 조절',
-    chelating: '금속이온 봉쏄, 방부 보조',
+    chelating: '금속이온 봉쇄, 방부 보조',
     filmformer: '표면 피막 형성, 지속력',
     sunscreen: '자외선 차단 (화학/물리)',
     brightening: '멜라닌 억제, 미백 기능',
@@ -411,7 +411,7 @@ function FormulaGuideDrawer({ l3, onClose }) {
               <span className="text-xs font-semibold text-blue-700">가이드 합계</span>
               <span className="text-sm font-bold text-blue-700">{entries.reduce((s, [, v]) => s + v, 0).toFixed(1)}%</span>
             </div>
-            <p className="text-[10px] text-blue-500 mt-1">잔여분은 향료·착색제 등 소량 성분으로 채욹니다</p>
+            <p className="text-[10px] text-blue-500 mt-1">잔여분은 향료·착색제 등 소량 성분으로 채웁니다</p>
           </div>
         </div>
       </div>
@@ -454,7 +454,7 @@ function FormulaStep({ l1, l2, l3, formula, onBack, onPctChange, onRemove, onSav
       '─'.repeat(24),
       ...formula.map((f) => `${f.ingredient.emoji} ${f.ingredient.name}: ${f.pct.toFixed(2)}%`),
       '─'.repeat(24),
-      `종 함량: ${total.toFixed(2)}%`,
+      `총 함량: ${total.toFixed(2)}%`,
     ].join('\n');
     try {
       await navigator.clipboard.writeText(text);
@@ -505,7 +505,7 @@ function FormulaStep({ l1, l2, l3, formula, onBack, onPctChange, onRemove, onSav
 
       <div className="rounded-lg p-4 mb-4" style={SURFACE}>
         <div className="flex items-center justify-between mb-2">
-          <p className="font-semibold text-sm" style={{ color: '#171717' }}>종 배합 함량</p>
+          <p className="font-semibold text-sm" style={{ color: '#171717' }}>총 배합 함량</p>
           <p className="font-bold text-lg" style={{ color: pctColor }}>{total.toFixed(1)}%</p>
         </div>
         <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: '#F4F4F5' }}>
@@ -612,7 +612,7 @@ function FormulaStep({ l1, l2, l3, formula, onBack, onPctChange, onRemove, onSav
       {total > 100 && (
         <div className="rounded-md p-3.5"
           style={{ background: '#FEF2F2', border: '1px solid #FECACA' }}>
-          <p className="text-xs font-semibold" style={{ color: '#DC2626' }}>⚠️ 종 함량이 100%를 초과합니다.</p>
+          <p className="text-xs font-semibold" style={{ color: '#DC2626' }}>⚠️ 총 함량이 100%를 초과합니다.</p>
         </div>
       )}
 
@@ -639,24 +639,21 @@ function FormulaStep({ l1, l2, l3, formula, onBack, onPctChange, onRemove, onSav
 function IngredientModal({ ingredient, onClose, inLab, onToggle }) {
   if (!ingredient) return null;
   return (
-    <div className="fixed inset-0 z-50 flex flex-col justify-end"
-      style={{ background: 'rgba(0,0,0,0.4)' }} onClick={onClose}>
-      <div className="rounded-t-2xl max-w-[480px] w-full mx-auto max-h-[85vh] flex flex-col"
-        style={{ background: '#FFFFFF', border: '1px solid #E5E5E5', borderBottom: 'none' }}
+    <div className="fixed inset-0 z-50 flex items-center justify-center px-4"
+      style={{ background: 'rgba(0,0,0,0.5)' }} onClick={onClose}>
+      <div className="relative rounded-2xl w-full max-w-[400px] max-h-[88vh] flex flex-col overflow-hidden"
+        style={{ background: '#FFFFFF', boxShadow: '0 24px 80px rgba(0,0,0,0.18)' }}
         onClick={(e) => e.stopPropagation()}>
-        <div className="flex-shrink-0 pt-3 pb-2 px-4">
-          <div className="w-10 h-1 rounded-full mx-auto" style={{ background: '#E5E5E5' }} />
-        </div>
-        <div className="overflow-y-auto flex-1 pb-4">
+        <button onClick={onClose}
+          className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full flex items-center justify-center"
+          style={{ background: '#FFFFFF', color: '#666666', boxShadow: '0 2px 8px rgba(0,0,0,0.12)' }}>✕</button>
+        <div className="overflow-y-auto flex-1">
           <IngredientCard ingredient={ingredient} modal />
         </div>
-        <div className="flex-shrink-0 px-4 pb-6 pt-2 flex gap-2"
-          style={{ borderTop: '1px solid #E5E5E5' }}>
-          <button onClick={onClose}
-            className="flex-1 py-3 rounded-lg font-semibold text-sm"
-            style={{ background: '#F4F4F5', color: '#444444' }}>닫기</button>
+        <div className="flex-shrink-0 px-5 pb-5 pt-3"
+          style={{ borderTop: '1px solid #F0F0F0' }}>
           <button onClick={() => { onToggle(ingredient); onClose(); }}
-            className="flex-1 py-3 rounded-lg font-bold text-sm text-white"
+            className="w-full py-3.5 rounded-xl font-bold text-sm text-white"
             style={{ background: inLab ? '#DC2626' : '#0072F5' }}>
             {inLab ? '제거' : '배합에 추가 +'}
           </button>

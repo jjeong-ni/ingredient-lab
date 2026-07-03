@@ -36,7 +36,7 @@ export default function App() {
     catch { return new Set(); }
   });
   const [savedFormulas, setSavedFormulas] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('savedFormulas') || '[]')); }
+    try { return JSON.parse(localStorage.getItem('savedFormulas') || '[]'); }
     catch { return []; }
   });
 
