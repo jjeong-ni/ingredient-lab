@@ -3,6 +3,7 @@ import { lineageMapByFormulaId } from '../utils/lineage';
 import CompareDialog from './CompareDialog';
 import { ingredients } from '../data/ingredients';
 import { GOAL_MAP, computeGoalScore } from '../data/goals';
+import { formatKRW } from '../data/costs';
 
 const SURFACE = {
   background: '#FFFFFF',
@@ -153,6 +154,7 @@ function ExperimentCard({ formula, onUpdateFormula, onDeleteFormula, onReExperim
           )}
           <p className="text-[10px] mt-0.5" style={{ color: '#888888' }}>
             {formula.l1Label} · {formula.l2Label} · {formula.createdAt} · 성분 {formula.items.length}개 · {total.toFixed(1)}%
+            {typeof formula.estCost === 'number' && ` · 💰 ${formatKRW(formula.estCost)}`}
           </p>
           {note.rating > 0 && (
             <p className="mt-0.5" style={{ fontSize: 11, color: '#F59E0B' }}>{'★'.repeat(note.rating)}{'☆'.repeat(5 - note.rating)}</p>

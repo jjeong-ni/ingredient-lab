@@ -5,6 +5,8 @@ import IngredientCard from './IngredientCard';
 import ResearcherPanel, { ResearcherIntro } from './ResearcherPanel';
 import LabNotebook from './LabNotebook';
 import { GoalPicker, GoalScoreCard } from './GoalPanel';
+import CostPanel from './CostPanel';
+import { estimateFormulaCost } from '../data/costs';
 
 const SURFACE = {
   background: '#FFFFFF',
@@ -461,6 +463,7 @@ function FormulaStep({ l1, l2, l3, formula, onBack, onPctChange, onRemove, onSav
       version: parentExp ? (parentExp.version || 1) + 1 : 1,
       parentId: parentExp?.id || null,
       goals: goals || [],
+      estCost: estimateFormulaCost(formula).total,
     };
     onSaveFormula(data);
     setSaved(true);
@@ -502,6 +505,7 @@ function FormulaStep({ l1, l2, l3, formula, onBack, onPctChange, onRemove, onSav
       {guideOpen && <FormulaGuideDrawer l3={l3} onClose={() => setGuideOpen(false)} />}
 
       <GoalScoreCard goals={goals} formula={formula} />
+      <CostPanel formula={formula} />
 
       <div className="rounded-lg p-4 mb-4" style={SURFACE}>
         <div className="flex items-center justify-between mb-2">

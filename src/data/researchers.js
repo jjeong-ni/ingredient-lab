@@ -2,6 +2,7 @@ import { ingredients, synergies, CATEGORIES } from './ingredients';
 import { parseConc } from './productTypes';
 import { getOrigin } from '../utils/origin';
 import { computeGoalScore, suggestForGoal } from './goals';
+import { estimateFormulaCost, formatKRW } from './costs';
 
 /** 실험을 도와주는 연구팀 5인 */
 export const RESEARCHERS = [
@@ -202,6 +203,20 @@ export function analyzeFormula(formula, l3, goals) {
   const fermented = items.find((f) => f.ingredient.category === 'fermented');
   if (fermented) {
     msgs.push({ rid: 'pyo', type: 'info', text: `${fermented.ingredient.emoji} 발효 원료는 로트별 품질 편차가 커요. 검증된 발효 전문 제조사를 소개해드릴게요.` });
+  }
+
+  if (items.length >= 2) {
+    const { breakdown, total } = estimateFormulaCost(items);
+    const top = breakdown[0];
+    const topShare = total > 0 ? Math.round((top.cost / total) * 100) : 0;
+    if (topShare >= 60) {
+      msgs.push({
+        rid: 'pyo', type: 'tip',
+        text: `100g 기준 예상 원가는 ${formatKRW(total)}인데, ${top.ingredient.emoji} ${top.ingredient.name} 하나가 ${topShare}%를 차지해요. 등급을 낮추거나 대체 원료로 바꾸면 원가를 확 줄일 수 있어요. 거래처 연결해드릴까요?`,
+      });
+    } else {
+      msgs.push({ rid: 'pyo', type: 'info', text: `100g 기준 예상 원가는 ${formatKRW(total)}예요. (원료 시세 추정치)` });
+    }
   }
 
   /* 정렬: 경고 > 칭찬 > 제안 > 정보 */
