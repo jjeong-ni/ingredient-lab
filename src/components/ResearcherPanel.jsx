@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { RESEARCHERS, RESEARCHER_MAP, analyzeFormula } from '../data/researchers';
+import { progressForXp, DEEP_TIPS } from '../data/affinity';
 
 const TYPE_STYLE = {
   warn:   { border: '#FECACA', bg: '#FEF2F2', chip: '⚠️ 주의' },
@@ -74,49 +75,98 @@ function TeamDialog({ messages, onClose }) {
 }
 
 /** 연구팀 소개 카드 행 (Step1용) */
-export function ResearcherIntro() {
+export function ResearcherIntro({ affinity }) {
   const [selected, setSelected] = useState(null);
+  const xpOf = (rid) => (affinity && affinity[rid]) || 0;
+
   return (
     <div className="mb-5">
       <p className="text-[10px] font-bold uppercase tracking-widest mb-2.5" style={{ color: '#888888' }}>함께하는 연구팀</p>
       <div className="flex gap-2 overflow-x-auto pb-2" style={{ scrollbarWidth: 'none' }}>
-        {RESEARCHERS.map((r) => (
-          <button key={r.id} onClick={() => setSelected(r)}
-            className="flex-shrink-0 flex flex-col items-center gap-1.5 px-3.5 py-3 rounded-xl transition-all active:scale-95"
-            style={{ background: '#FFFFFF', border: '1px solid #E5E5E5', boxShadow: '0 1px 3px rgba(0,0,0,0.07)', minWidth: 86 }}>
-            <Avatar researcher={r} size={40} />
-            <div className="text-center">
-              <p style={{ fontSize: 11, fontWeight: 800, color: '#171717' }}>{r.name}</p>
-              <p style={{ fontSize: 9, fontWeight: 600, color: r.color }}>{r.title}</p>
-            </div>
-          </button>
-        ))}
+        {RESEARCHERS.map((r) => {
+          const { level } = progressForXp(xpOf(r.id));
+          return (
+            <button key={r.id} onClick={() => setSelected(r)}
+              className="flex-shrink-0 flex flex-col items-center gap-1.5 px-3.5 py-3 rounded-xl transition-all active:scale-95"
+              style={{ background: '#FFFFFF', border: '1px solid #E5E5E5', boxShadow: '0 1px 3px rgba(0,0,0,0.07)', minWidth: 86 }}>
+              <div className="relative">
+                <Avatar researcher={r} size={40} />
+                <span className="absolute -bottom-1 -right-1 rounded-full flex items-center justify-center text-white"
+                  style={{ width: 16, height: 16, fontSize: 8, fontWeight: 800, background: r.color, border: '2px solid white' }}>
+                  {level}
+                </span>
+              </div>
+              <div className="text-center">
+                <p style={{ fontSize: 11, fontWeight: 800, color: '#171717' }}>{r.name}</p>
+                <p style={{ fontSize: 9, fontWeight: 600, color: r.color }}>{r.title}</p>
+              </div>
+            </button>
+          );
+        })}
       </div>
 
       {selected && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center px-4"
-          style={{ background: 'rgba(0,0,0,0.5)' }} onClick={() => setSelected(null)}>
-          <div className="relative rounded-2xl w-full max-w-[340px] overflow-hidden"
-            style={{ background: '#FFFFFF', boxShadow: '0 24px 80px rgba(0,0,0,0.18)' }}
-            onClick={(e) => e.stopPropagation()}>
-            <div className="flex flex-col items-center pt-7 pb-3 px-6">
-              <Avatar researcher={selected} size={64} />
-              <p className="mt-3" style={{ fontSize: 17, fontWeight: 800, color: '#171717' }}>{selected.name}</p>
-              <p style={{ fontSize: 12, fontWeight: 700, color: selected.color }}>{selected.title}</p>
-              <span className="mt-2 px-3 py-1 rounded-full"
-                style={{ fontSize: 10, fontWeight: 700, background: '#F4F4F5', color: '#444444' }}>
-                🎖 {selected.ability}
-              </span>
-              <p className="mt-3 text-center leading-relaxed" style={{ fontSize: 12, color: '#444444' }}>{selected.desc}</p>
+        <ResearcherProfile researcher={selected} xp={xpOf(selected.id)} onClose={() => setSelected(null)} />
+      )}
+    </div>
+  );
+}
+
+function ResearcherProfile({ researcher, xp, onClose }) {
+  const { level, next, progress, title } = progressForXp(xp);
+  const tips = DEEP_TIPS[researcher.id] || [];
+  const unlockedTips = tips.slice(0, level - 1);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center px-4"
+      style={{ background: 'rgba(0,0,0,0.5)' }} onClick={onClose}>
+      <div className="relative rounded-2xl w-full max-w-[340px] max-h-[85vh] flex flex-col overflow-hidden"
+        style={{ background: '#FFFFFF', boxShadow: '0 24px 80px rgba(0,0,0,0.18)' }}
+        onClick={(e) => e.stopPropagation()}>
+        <div className="flex flex-col items-center pt-7 pb-3 px-6 flex-shrink-0">
+          <Avatar researcher={researcher} size={64} />
+          <p className="mt-3" style={{ fontSize: 17, fontWeight: 800, color: '#171717' }}>{researcher.name}</p>
+          <p style={{ fontSize: 12, fontWeight: 700, color: researcher.color }}>{researcher.title}</p>
+          <span className="mt-2 px-3 py-1 rounded-full"
+            style={{ fontSize: 10, fontWeight: 700, background: '#F4F4F5', color: '#444444' }}>
+            🎖 {researcher.ability}
+          </span>
+          <p className="mt-3 text-center leading-relaxed" style={{ fontSize: 12, color: '#444444' }}>{researcher.desc}</p>
+
+          <div className="w-full mt-4">
+            <div className="flex items-center justify-between mb-1">
+              <span style={{ fontSize: 11, fontWeight: 800, color: researcher.color }}>Lv.{level} · {title}</span>
+              <span style={{ fontSize: 10, color: '#BBBBBB' }}>{next ? `${xp} / ${next} XP` : `MAX · ${xp} XP`}</span>
             </div>
-            <div className="px-5 pb-5 pt-2">
-              <button onClick={() => setSelected(null)}
-                className="w-full py-3 rounded-xl font-bold text-sm"
-                style={{ background: '#F4F4F5', color: '#444444' }}>닫기</button>
+            <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: '#F4F4F5' }}>
+              <div className="h-full rounded-full transition-all" style={{ width: `${Math.round(progress * 100)}%`, background: researcher.color }} />
             </div>
+            <p className="mt-1" style={{ fontSize: 9, color: '#BBBBBB' }}>실험을 저장할 때마다 함께한 연구원의 경험치가 올라가요</p>
           </div>
         </div>
-      )}
+
+        {unlockedTips.length > 0 && (
+          <div className="flex-1 overflow-y-auto px-5 pb-2 space-y-2" style={{ borderTop: '1px dashed #E5E5E5', paddingTop: 12 }}>
+            <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: '#888888' }}>🔓 해금된 심화 팁</p>
+            {unlockedTips.map((tip, i) => (
+              <div key={i} className="rounded-lg p-2.5" style={{ background: '#FAFAFA', border: '1px solid #F0F0F0' }}>
+                <p style={{ fontSize: 11, color: '#171717', lineHeight: 1.5 }}>{tip}</p>
+              </div>
+            ))}
+          </div>
+        )}
+        {unlockedTips.length === 0 && tips.length > 0 && (
+          <div className="px-5 pb-2" style={{ borderTop: '1px dashed #E5E5E5', paddingTop: 12 }}>
+            <p className="text-center" style={{ fontSize: 11, color: '#BBBBBB' }}>레벨2부터 심화 팁이 열려요. 실험을 더 저장해보세요!</p>
+          </div>
+        )}
+
+        <div className="px-5 pb-5 pt-3 flex-shrink-0">
+          <button onClick={onClose}
+            className="w-full py-3 rounded-xl font-bold text-sm"
+            style={{ background: '#F4F4F5', color: '#444444' }}>닫기</button>
+        </div>
+      </div>
     </div>
   );
 }

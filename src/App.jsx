@@ -39,6 +39,10 @@ export default function App() {
     try { return JSON.parse(localStorage.getItem('savedFormulas') || '[]'); }
     catch { return []; }
   });
+  const [researcherAffinity, setResearcherAffinity] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('researcherAffinity') || '{}'); }
+    catch { return {}; }
+  });
 
   useEffect(() => {
     const seen = localStorage.getItem('seenOnboarding');
@@ -88,6 +92,15 @@ export default function App() {
     });
   }, []);
 
+  const handleResearcherActivity = useCallback((rids) => {
+    setResearcherAffinity(prev => {
+      const next = { ...prev };
+      rids.forEach(rid => { next[rid] = (next[rid] || 0) + 1; });
+      localStorage.setItem('researcherAffinity', JSON.stringify(next));
+      return next;
+    });
+  }, []);
+
   return (
     <div className="min-h-screen" style={{ fontFamily: "'Nunito Variable', 'Nunito', -apple-system, system-ui, sans-serif", background: '#FAFAFA' }}>
       <div className="max-w-[480px] mx-auto min-h-screen flex flex-col">
@@ -118,6 +131,8 @@ export default function App() {
               onUpdateFormula={handleUpdateFormula}
               onDeleteFormula={handleDeleteFormula}
               labDictIds={labIngredientIds}
+              researcherAffinity={researcherAffinity}
+              onResearcherActivity={handleResearcherActivity}
             />
           )}
         </main>

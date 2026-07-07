@@ -8,6 +8,7 @@ import { GoalPicker, GoalScoreCard } from './GoalPanel';
 import CostPanel from './CostPanel';
 import { estimateFormulaCost } from '../data/costs';
 import StabilityPanel from './StabilityPanel';
+import { analyzeFormula } from '../data/researchers';
 
 const SURFACE = {
   background: '#FFFFFF',
@@ -71,7 +72,7 @@ function findSynergies(ids) {
   return synergies.filter((s) => s.ids.every((id) => ids.includes(id)));
 }
 
-function Step1({ onSelect, savedFormulas, labDictIds, onOpenNotebook }) {
+function Step1({ onSelect, savedFormulas, labDictIds, onOpenNotebook, researcherAffinity }) {
   const dictCount = labDictIds?.size || 0;
   const expCount = savedFormulas?.length || 0;
   const latest = expCount > 0 ? savedFormulas[savedFormulas.length - 1] : null;
@@ -119,7 +120,7 @@ function Step1({ onSelect, savedFormulas, labDictIds, onOpenNotebook }) {
         <span style={{ fontSize: 13, color: '#BBBBBB' }}>→</span>
       </button>
 
-      <ResearcherIntro />
+      <ResearcherIntro affinity={researcherAffinity} />
 
       <p className="text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: '#888888' }}>카테고리 선택</p>
       <div className="grid grid-cols-3 gap-3">
@@ -413,7 +414,7 @@ const UNIT_OPTIONS = [
   { label: '1%', value: 1 },
 ];
 
-function FormulaStep({ l1, l2, l3, formula, onBack, onPctChange, onRemove, onSaveFormula, parentExp, goals }) {
+function FormulaStep({ l1, l2, l3, formula, onBack, onPctChange, onRemove, onSaveFormula, parentExp, goals, onResearcherActivity }) {
   const [guideOpen, setGuideOpen] = useState(false);
   const [unit, setUnit] = useState(0.5);
   const [copied, setCopied] = useState(false);
@@ -467,6 +468,10 @@ function FormulaStep({ l1, l2, l3, formula, onBack, onPctChange, onRemove, onSav
       estCost: estimateFormulaCost(formula).total,
     };
     onSaveFormula(data);
+    if (onResearcherActivity) {
+      const messages = analyzeFormula(formula, l3, goals);
+      onResearcherActivity([...new Set(messages.map((m) => m.rid))]);
+    }
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   }
@@ -687,7 +692,7 @@ function restoreItems(f) {
     .filter(Boolean);
 }
 
-export default function LabTab({ savedFormulas, onSaveFormula, onUpdateFormula, onDeleteFormula, labDictIds }) {
+export default function LabTab({ savedFormulas, onSaveFormula, onUpdateFormula, onDeleteFormula, labDictIds, researcherAffinity, onResearcherActivity }) {
   const [step, setStep] = useState(1);
   const [l1, setL1] = useState(null);
   const [l2, setL2] = useState(null);
@@ -730,7 +735,8 @@ export default function LabTab({ savedFormulas, onSaveFormula, onUpdateFormula, 
     <div>
       {step === 1 && (
         <Step1 onSelect={selectL1} savedFormulas={savedFormulas}
-          labDictIds={labDictIds} onOpenNotebook={() => setStep('notebook')} />
+          labDictIds={labDictIds} onOpenNotebook={() => setStep('notebook')}
+          researcherAffinity={researcherAffinity} />
       )}
       {step === 'notebook' && (
         <LabNotebook savedFormulas={savedFormulas}
@@ -754,7 +760,8 @@ export default function LabTab({ savedFormulas, onSaveFormula, onUpdateFormula, 
         <FormulaStep l1={l1} l2={l2} l3={l3}
           formula={formula} onBack={() => setStep(4)}
           onPctChange={handlePctChange} onRemove={handleRemove}
-          onSaveFormula={onSaveFormula} parentExp={parentExp} goals={goals} />
+          onSaveFormula={onSaveFormula} parentExp={parentExp} goals={goals}
+          onResearcherActivity={onResearcherActivity} />
       )}
       <IngredientModal ingredient={modal} onClose={() => setModal(null)}
         inLab={modal ? selectedIds.has(modal.id) : false}
