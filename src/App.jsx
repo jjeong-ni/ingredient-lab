@@ -9,9 +9,9 @@ const NAV = [
     icon: (active) => (
       <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
         <rect x="3" y="3" width="18" height="18" rx="3"
-          stroke={active ? '#0072F5' : '#BBBBBB'} strokeWidth="2" />
+          stroke={active ? '#1B6E63' : '#93A29A'} strokeWidth="2" />
         <path d="M7 8h10M7 12h10M7 16h6"
-          stroke={active ? '#0072F5' : '#BBBBBB'} strokeWidth="2" strokeLinecap="round" />
+          stroke={active ? '#1B6E63' : '#93A29A'} strokeWidth="2" strokeLinecap="round" />
       </svg>
     ),
   },
@@ -20,7 +20,7 @@ const NAV = [
     icon: (active) => (
       <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
         <path d="M9 3h6M10 3v6l-4 8a2 2 0 001.8 2.9h8.4A2 2 0 0018 17l-4-8V3"
-          stroke={active ? '#0072F5' : '#BBBBBB'} strokeWidth="2"
+          stroke={active ? '#1B6E63' : '#93A29A'} strokeWidth="2"
           strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     ),
@@ -102,15 +102,15 @@ export default function App() {
   }, []);
 
   return (
-    <div className="min-h-screen" style={{ fontFamily: "'Nunito Variable', 'Nunito', -apple-system, system-ui, sans-serif", background: '#FAFAFA' }}>
+    <div className="min-h-screen" style={{ fontFamily: "'Nunito Variable', 'Nunito', -apple-system, system-ui, sans-serif", background: '#EFF3F1' }}>
       <div className="max-w-[480px] mx-auto min-h-screen flex flex-col">
         <header className="flex-shrink-0 px-5 pt-4 pb-3 flex items-center justify-between"
-          style={{ background: '#FFFFFF', borderBottom: '1px solid #E5E5E5' }}>
+          style={{ background: '#FFFFFF', borderBottom: '1px solid #DCE3DE' }}>
           <div className="flex items-center gap-2">
             <span className="text-xl">🧪</span>
-            <span style={{ color: '#171717', fontSize: 17, fontWeight: 800 }}>성분 LAB</span>
+            <span style={{ color: '#16201C', fontSize: 17, fontWeight: 800 }}>성분 LAB</span>
           </div>
-          <span className="text-xs" style={{ color: '#BBBBBB', fontWeight: 600 }}>
+          <span className="text-xs" style={{ color: '#93A29A', fontWeight: 600 }}>
             {tab === 'dict' ? '성분 사전' : '실험실'}
           </span>
         </header>
@@ -138,7 +138,7 @@ export default function App() {
         </main>
 
         <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] z-30"
-          style={{ background: '#FFFFFF', borderTop: '1px solid #E5E5E5' }}>
+          style={{ background: '#FFFFFF', borderTop: '1px solid #DCE3DE' }}>
           <div className="flex">
             {NAV.map((n) => {
               const active = tab === n.id;
@@ -147,15 +147,15 @@ export default function App() {
                   className="flex-1 flex flex-col items-center justify-center py-3 gap-0.5 relative">
                   {active && (
                     <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full"
-                      style={{ background: '#0072F5' }} />
+                      style={{ background: '#1B6E63' }} />
                   )}
                   {n.icon(active)}
-                  <span style={{ fontSize: 10, fontWeight: 700, color: active ? '#0072F5' : '#BBBBBB' }}>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: active ? '#1B6E63' : '#93A29A' }}>
                     {n.label}
                   </span>
                   {n.id === 'lab' && labIngredientIds.size > 0 && (
                     <span className="absolute top-1.5 right-8 w-4 h-4 rounded-full flex items-center justify-center text-white"
-                      style={{ background: '#0072F5', fontSize: 9, fontWeight: 700 }}>
+                      style={{ background: '#1B6E63', fontSize: 9, fontWeight: 700 }}>
                       {labIngredientIds.size}
                     </span>
                   )}

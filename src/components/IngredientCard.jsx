@@ -3,7 +3,7 @@ import { getOrigin } from '../utils/origin';
 
 const safetyInfo = (n) => {
   if (n >= 5) return { text: '안전', dot: '#16a34a', bg: '#F0FDF4', color: '#15803D' };
-  if (n >= 4) return { text: '양호', dot: '#2563EB', bg: '#EFF6FF', color: '#1D4ED8' };
+  if (n >= 4) return { text: '양호', dot: '#2563EB', bg: '#E6F1EC', color: '#1E4D38' };
   if (n >= 3) return { text: '주의', dot: '#D97706', bg: '#FFFBEB', color: '#B45309' };
   return       { text: '경고', dot: '#DC2626', bg: '#FEF2F2', color: '#B91C1C' };
 };
@@ -34,13 +34,13 @@ function ModalView({ ingredient, isFavorite, onFavoriteToggle }) {
               className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full flex items-center justify-center"
               style={isFavorite
                 ? { background: '#FFF1F2', color: '#E11D48', boxShadow: '0 0 0 2px #FFFFFF' }
-                : { background: '#F4F4F5', color: '#CCCCCC', boxShadow: '0 0 0 2px #FFFFFF' }}>
+                : { background: '#E6EEE9', color: '#CCCCCC', boxShadow: '0 0 0 2px #FFFFFF' }}>
               <span style={{ fontSize: 14 }}>{isFavorite ? '♥' : '♡'}</span>
             </button>
           )}
         </div>
 
-        <h2 style={{ fontWeight: 800, fontSize: 20, color: '#171717', textAlign: 'center', lineHeight: 1.3, marginBottom: 4 }}>
+        <h2 style={{ fontWeight: 800, fontSize: 20, color: '#16201C', textAlign: 'center', lineHeight: 1.3, marginBottom: 4 }}>
           {ingredient.name}
         </h2>
         <p style={{ fontSize: 13, color: '#999999', textAlign: 'center', marginBottom: 16 }}>{ingredient.nameEn}</p>
@@ -75,7 +75,7 @@ function ModalView({ ingredient, isFavorite, onFavoriteToggle }) {
         <Section label="해결 피부 고민">
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 4 }}>
             {ingredient.painPoints.map((p) => (
-              <span key={p} style={{ fontSize: 12, fontWeight: 600, padding: '6px 14px', borderRadius: 99, background: '#F2F2F2', color: '#444444' }}>
+              <span key={p} style={{ fontSize: 12, fontWeight: 600, padding: '6px 14px', borderRadius: 99, background: '#F2F2F2', color: '#445048' }}>
                 {p}
               </span>
             ))}
@@ -86,7 +86,7 @@ function ModalView({ ingredient, isFavorite, onFavoriteToggle }) {
           <Section label="키워드">
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 4 }}>
               {ingredient.tags.map((t) => (
-                <span key={t} style={{ fontSize: 12, padding: '5px 12px', borderRadius: 99, background: '#FAFAFA', color: '#888888', border: '1px solid #EBEBEB' }}>
+                <span key={t} style={{ fontSize: 12, padding: '5px 12px', borderRadius: 99, background: '#EFF3F1', color: '#5F6B65', border: '1px solid #EBEBEB' }}>
                   #{t}
                 </span>
               ))}
@@ -96,8 +96,8 @@ function ModalView({ ingredient, isFavorite, onFavoriteToggle }) {
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
           <div style={{ borderRadius: 16, padding: '16px 16px', background: '#F8F8F8' }}>
-            <p style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#AAAAAA', marginBottom: 10 }}>권장 농도</p>
-            <p style={{ fontWeight: 800, fontSize: 15, color: '#171717' }}>{ingredient.concentration}</p>
+            <p style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#8B968F', marginBottom: 10 }}>권장 농도</p>
+            <p style={{ fontWeight: 800, fontSize: 15, color: '#16201C' }}>{ingredient.concentration}</p>
           </div>
           <div style={{ borderRadius: 16, padding: '16px 16px', background: safety.bg }}>
             <p style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: safety.color, marginBottom: 10 }}>안전도</p>
@@ -125,7 +125,7 @@ function ModalView({ ingredient, isFavorite, onFavoriteToggle }) {
 function Section({ label, children }) {
   return (
     <div>
-      <p style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#AAAAAA', marginBottom: 10 }}>{label}</p>
+      <p style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#8B968F', marginBottom: 10 }}>{label}</p>
       {children}
     </div>
   );
@@ -154,11 +154,11 @@ export default function IngredientCard({ ingredient, onClick, inLab, onLabToggle
       </div>
 
       <div className="flex-1 px-3 pt-2.5 pb-1">
-        <p style={{ fontWeight: 700, fontSize: 12, lineHeight: 1.35, marginBottom: 2, color: '#171717' }}
+        <p style={{ fontWeight: 700, fontSize: 12, lineHeight: 1.35, marginBottom: 2, color: '#16201C' }}
           className="line-clamp-2">
           {ingredient.name}
         </p>
-        <p style={{ fontSize: 11, color: '#AAAAAA', marginBottom: 6 }} className="truncate">{ingredient.nameEn}</p>
+        <p style={{ fontSize: 11, color: '#8B968F', marginBottom: 6 }} className="truncate">{ingredient.nameEn}</p>
         <div className="flex items-center gap-1 flex-wrap">
           <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 7px', borderRadius: 99, background: '#F2F2F2', color: '#555555' }}>
             {cat.icon} {cat.label}
@@ -175,8 +175,8 @@ export default function IngredientCard({ ingredient, onClick, inLab, onLabToggle
         <button
           onClick={(e) => { e.stopPropagation(); onLabToggle?.(ingredient); }}
           style={inLab
-            ? { width: 26, height: 26, borderRadius: 8, background: '#0072F5', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, flexShrink: 0 }
-            : { width: 26, height: 26, borderRadius: 8, background: '#F2F2F2', color: '#999999', border: '1px solid #E5E5E5', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, flexShrink: 0 }}>
+            ? { width: 26, height: 26, borderRadius: 8, background: '#1B6E63', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, flexShrink: 0 }
+            : { width: 26, height: 26, borderRadius: 8, background: '#F2F2F2', color: '#999999', border: '1px solid #DCE3DE', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, flexShrink: 0 }}>
           {inLab ? '✓' : '+'}
         </button>
       </div>

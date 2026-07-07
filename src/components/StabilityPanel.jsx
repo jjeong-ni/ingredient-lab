@@ -7,12 +7,12 @@ export default function StabilityPanel({ formula }) {
   if (phContributors.length === 0 && oxidationProne.length === 0) return null;
 
   return (
-    <div className="rounded-lg p-4 mb-4" style={{ background: '#FFFFFF', border: '1px solid #E5E5E5', boxShadow: '0 1px 3px rgba(0,0,0,0.07)' }}>
-      <p className="font-semibold text-sm mb-3" style={{ color: '#171717' }}>🧪 안정성 시뮬레이션</p>
+    <div className="rounded-lg p-4 mb-4" style={{ background: '#FFFFFF', border: '1px solid #DCE3DE', boxShadow: '0 1px 3px rgba(0,0,0,0.07)' }}>
+      <p className="font-semibold text-sm mb-3" style={{ color: '#16201C' }}>🧪 안정성 시뮬레이션</p>
 
       {phContributors.length > 0 && (
         <div className="mb-3">
-          <p className="text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: '#888888' }}>pH 궁합</p>
+          <p className="text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: '#5F6B65' }}>pH 궁합</p>
           {phConflict ? (
             <div className="rounded-md p-2.5" style={{ background: '#FEF2F2', border: '1px solid #FECACA' }}>
               <p style={{ fontSize: 12, color: '#DC2626', fontWeight: 700 }}>⚠️ pH 요구 범위가 서로 충돌해요</p>
@@ -37,7 +37,7 @@ export default function StabilityPanel({ formula }) {
 
       {oxidationProne.length > 0 && (
         <div>
-          <p className="text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: '#888888' }}>산화 안정성</p>
+          <p className="text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: '#5F6B65' }}>산화 안정성</p>
           {oxidationRisk ? (
             <div className="rounded-md p-2.5" style={{ background: '#FFFBEB', border: '1px solid #FDE68A' }}>
               <p style={{ fontSize: 12, color: '#B45309', fontWeight: 700 }}>⚠️ 산화 취약 성분에 항산화제가 없어요</p>

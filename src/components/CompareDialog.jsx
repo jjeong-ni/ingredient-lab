@@ -11,8 +11,8 @@ function VersionChips({ lineage, value, onChange, otherValue }) {
           <button key={f.id} disabled={disabled} onClick={() => onChange(f)}
             className="flex-shrink-0 px-2.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all active:scale-95 disabled:opacity-30"
             style={active
-              ? { background: '#171717', color: 'white' }
-              : { background: '#FFFFFF', color: '#444444', border: '1px solid #E5E5E5' }}>
+              ? { background: '#16201C', color: 'white' }
+              : { background: '#FFFFFF', color: '#445048', border: '1px solid #DCE3DE' }}>
             {f.version || 1}차 · {f.createdAt}
           </button>
         );
@@ -23,13 +23,13 @@ function VersionChips({ lineage, value, onChange, otherValue }) {
 
 function PctDelta({ from, to }) {
   const delta = to - from;
-  const color = delta > 0 ? '#0072F5' : delta < 0 ? '#DC2626' : '#888888';
+  const color = delta > 0 ? '#1B6E63' : delta < 0 ? '#DC2626' : '#5F6B65';
   const sign = delta > 0 ? '+' : '';
   return (
     <span className="flex items-center gap-1 text-xs">
-      <span style={{ color: '#888888' }}>{from.toFixed(2)}%</span>
-      <span style={{ color: '#BBBBBB' }}>→</span>
-      <span style={{ fontWeight: 800, color: '#171717' }}>{to.toFixed(2)}%</span>
+      <span style={{ color: '#5F6B65' }}>{from.toFixed(2)}%</span>
+      <span style={{ color: '#93A29A' }}>→</span>
+      <span style={{ fontWeight: 800, color: '#16201C' }}>{to.toFixed(2)}%</span>
       <span style={{ fontWeight: 700, color }}>({sign}{delta.toFixed(2)}%p)</span>
     </span>
   );
@@ -39,13 +39,13 @@ function IngRow({ item, kind }) {
   const badge = {
     added:   { label: '+ 추가', bg: '#F0FDF4', color: '#15803D', border: '#BBF7D0' },
     removed: { label: '− 제거', bg: '#FEF2F2', color: '#DC2626', border: '#FECACA' },
-    changed: { label: '± 변경', bg: '#EFF6FF', color: '#1D4ED8', border: '#DBEAFE' },
+    changed: { label: '± 변경', bg: '#E6F1EC', color: '#1E4D38', border: '#C8E3DA' },
   }[kind];
   return (
     <div className="flex items-center justify-between gap-2 py-1.5">
       <div className="flex items-center gap-1.5 min-w-0">
         <span className="flex-shrink-0">{item.emoji}</span>
-        <span className="truncate" style={{ fontSize: 12, fontWeight: 600, color: '#171717' }}>{item.name}</span>
+        <span className="truncate" style={{ fontSize: 12, fontWeight: 600, color: '#16201C' }}>{item.name}</span>
       </div>
       <div className="flex-shrink-0 flex items-center gap-1.5">
         {kind === 'changed'
@@ -76,44 +76,44 @@ export default function CompareDialog({ lineage, initialA, initialB, onClose }) 
         <div className="flex-shrink-0 px-5 pt-5 pb-3" style={{ borderBottom: '1px solid #F0F0F0' }}>
           <div className="flex items-center justify-between mb-3">
             <div>
-              <p style={{ fontSize: 15, fontWeight: 800, color: '#171717' }}>🆚 실험 비교</p>
-              <p style={{ fontSize: 11, color: '#888888' }}>{a.icon} {a.name}</p>
+              <p style={{ fontSize: 15, fontWeight: 800, color: '#16201C' }}>🆚 실험 비교</p>
+              <p style={{ fontSize: 11, color: '#5F6B65' }}>{a.icon} {a.name}</p>
             </div>
             <button onClick={onClose}
               className="w-8 h-8 rounded-full flex items-center justify-center"
-              style={{ background: '#F4F4F5', color: '#666666' }}>✕</button>
+              style={{ background: '#E6EEE9', color: '#666666' }}>✕</button>
           </div>
-          <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: '#888888' }}>이전 (A)</p>
+          <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: '#5F6B65' }}>이전 (A)</p>
           <VersionChips lineage={lineage} value={a} onChange={setA} otherValue={b} />
-          <p className="text-[10px] font-bold uppercase tracking-widest mb-1 mt-2" style={{ color: '#888888' }}>이후 (B)</p>
+          <p className="text-[10px] font-bold uppercase tracking-widest mb-1 mt-2" style={{ color: '#5F6B65' }}>이후 (B)</p>
           <VersionChips lineage={lineage} value={b} onChange={setB} otherValue={a} />
         </div>
 
         <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
-          <div className="rounded-lg p-3 flex items-center justify-between" style={{ background: '#FAFAFA', border: '1px solid #F0F0F0' }}>
-            <span style={{ fontSize: 12, fontWeight: 700, color: '#444444' }}>총 함량</span>
+          <div className="rounded-lg p-3 flex items-center justify-between" style={{ background: '#EFF3F1', border: '1px solid #F0F0F0' }}>
+            <span style={{ fontSize: 12, fontWeight: 700, color: '#445048' }}>총 함량</span>
             <PctDelta from={diff.totalA} to={diff.totalB} />
           </div>
 
           {(ratingA > 0 || ratingB > 0) && (
-            <div className="rounded-lg p-3 flex items-center justify-between" style={{ background: '#FAFAFA', border: '1px solid #F0F0F0' }}>
-              <span style={{ fontSize: 12, fontWeight: 700, color: '#444444' }}>만족도</span>
+            <div className="rounded-lg p-3 flex items-center justify-between" style={{ background: '#EFF3F1', border: '1px solid #F0F0F0' }}>
+              <span style={{ fontSize: 12, fontWeight: 700, color: '#445048' }}>만족도</span>
               <div className="flex items-center gap-2" style={{ fontSize: 12 }}>
                 <span style={{ color: '#F59E0B' }}>{'★'.repeat(ratingA)}{'☆'.repeat(5 - ratingA)}</span>
-                <span style={{ color: '#BBBBBB' }}>→</span>
+                <span style={{ color: '#93A29A' }}>→</span>
                 <span style={{ color: '#F59E0B' }}>{'★'.repeat(ratingB)}{'☆'.repeat(5 - ratingB)}</span>
               </div>
             </div>
           )}
 
           {diff.added.length === 0 && diff.removed.length === 0 && diff.changed.length === 0 && (
-            <p className="text-center py-2" style={{ fontSize: 12, color: '#888888' }}>성분 구성 변화가 없어요</p>
+            <p className="text-center py-2" style={{ fontSize: 12, color: '#5F6B65' }}>성분 구성 변화가 없어요</p>
           )}
 
           {diff.added.length > 0 && (
             <div>
               <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: '#15803D' }}>추가된 성분 {diff.added.length}개</p>
-              <div className="rounded-lg px-3" style={{ background: '#FFFFFF', border: '1px solid #E5E5E5' }}>
+              <div className="rounded-lg px-3" style={{ background: '#FFFFFF', border: '1px solid #DCE3DE' }}>
                 {diff.added.map((it, i) => <IngRow key={i} item={it} kind="added" />)}
               </div>
             </div>
@@ -121,15 +121,15 @@ export default function CompareDialog({ lineage, initialA, initialB, onClose }) 
           {diff.removed.length > 0 && (
             <div>
               <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: '#DC2626' }}>제거된 성분 {diff.removed.length}개</p>
-              <div className="rounded-lg px-3" style={{ background: '#FFFFFF', border: '1px solid #E5E5E5' }}>
+              <div className="rounded-lg px-3" style={{ background: '#FFFFFF', border: '1px solid #DCE3DE' }}>
                 {diff.removed.map((it, i) => <IngRow key={i} item={it} kind="removed" />)}
               </div>
             </div>
           )}
           {diff.changed.length > 0 && (
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: '#1D4ED8' }}>함량 변경 {diff.changed.length}개</p>
-              <div className="rounded-lg px-3" style={{ background: '#FFFFFF', border: '1px solid #E5E5E5' }}>
+              <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: '#1E4D38' }}>함량 변경 {diff.changed.length}개</p>
+              <div className="rounded-lg px-3" style={{ background: '#FFFFFF', border: '1px solid #DCE3DE' }}>
                 {diff.changed.map((it, i) => <IngRow key={i} item={it} kind="changed" />)}
               </div>
             </div>
@@ -137,17 +137,17 @@ export default function CompareDialog({ lineage, initialA, initialB, onClose }) 
 
           {(a.note?.result || a.note?.improve || b.note?.result || b.note?.improve) && (
             <div className="grid grid-cols-2 gap-2">
-              <div className="rounded-lg p-3" style={{ background: '#FAFAFA', border: '1px solid #F0F0F0' }}>
-                <p className="text-[10px] font-bold mb-1" style={{ color: '#888888' }}>{a.version || 1}차 노트</p>
-                {a.note?.result && <p style={{ fontSize: 11, color: '#171717' }} className="mb-1">📋 {a.note.result}</p>}
-                {a.note?.improve && <p style={{ fontSize: 11, color: '#171717' }}>🔧 {a.note.improve}</p>}
-                {!a.note?.result && !a.note?.improve && <p style={{ fontSize: 11, color: '#BBBBBB' }}>기록 없음</p>}
+              <div className="rounded-lg p-3" style={{ background: '#EFF3F1', border: '1px solid #F0F0F0' }}>
+                <p className="text-[10px] font-bold mb-1" style={{ color: '#5F6B65' }}>{a.version || 1}차 노트</p>
+                {a.note?.result && <p style={{ fontSize: 11, color: '#16201C' }} className="mb-1">📋 {a.note.result}</p>}
+                {a.note?.improve && <p style={{ fontSize: 11, color: '#16201C' }}>🔧 {a.note.improve}</p>}
+                {!a.note?.result && !a.note?.improve && <p style={{ fontSize: 11, color: '#93A29A' }}>기록 없음</p>}
               </div>
-              <div className="rounded-lg p-3" style={{ background: '#FAFAFA', border: '1px solid #F0F0F0' }}>
-                <p className="text-[10px] font-bold mb-1" style={{ color: '#888888' }}>{b.version || 1}차 노트</p>
-                {b.note?.result && <p style={{ fontSize: 11, color: '#171717' }} className="mb-1">📋 {b.note.result}</p>}
-                {b.note?.improve && <p style={{ fontSize: 11, color: '#171717' }}>🔧 {b.note.improve}</p>}
-                {!b.note?.result && !b.note?.improve && <p style={{ fontSize: 11, color: '#BBBBBB' }}>기록 없음</p>}
+              <div className="rounded-lg p-3" style={{ background: '#EFF3F1', border: '1px solid #F0F0F0' }}>
+                <p className="text-[10px] font-bold mb-1" style={{ color: '#5F6B65' }}>{b.version || 1}차 노트</p>
+                {b.note?.result && <p style={{ fontSize: 11, color: '#16201C' }} className="mb-1">📋 {b.note.result}</p>}
+                {b.note?.improve && <p style={{ fontSize: 11, color: '#16201C' }}>🔧 {b.note.improve}</p>}
+                {!b.note?.result && !b.note?.improve && <p style={{ fontSize: 11, color: '#93A29A' }}>기록 없음</p>}
               </div>
             </div>
           )}

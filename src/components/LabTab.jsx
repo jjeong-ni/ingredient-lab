@@ -12,13 +12,13 @@ import { analyzeFormula } from '../data/researchers';
 
 const SURFACE = {
   background: '#FFFFFF',
-  border: '1px solid #E5E5E5',
+  border: '1px solid #DCE3DE',
   boxShadow: '0 1px 3px rgba(0,0,0,0.07)',
 };
 
 const STICKY_HEADER = {
   background: '#FFFFFF',
-  borderBottom: '1px solid #E5E5E5',
+  borderBottom: '1px solid #DCE3DE',
 };
 
 const SEARCH_ALIASES = {
@@ -82,17 +82,17 @@ function Step1({ onSelect, savedFormulas, labDictIds, onOpenNotebook, researcher
 
   return (
     <div className="px-4 pt-3 pb-6">
-      <div className="rounded-lg p-4 mb-5"
-        style={{ background: '#171717' }}>
-        <p className="font-bold text-white text-base">⚗️ 성분 실험실</p>
-        <p className="text-xs mt-1" style={{ color: 'rgba(255,255,255,0.55)' }}>만들 제품 유형을 선택하면<br/>연구팀이 실시간으로 실험을 도와드려요</p>
+      <div className="hero-glass rounded-2xl p-5 mb-5">
+        <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', opacity: 0.75 }}>FORMULA LAB</p>
+        <p className="font-bold text-white text-lg mt-1">⚗️ 성분 실험실</p>
+        <p className="text-xs mt-1.5" style={{ color: 'rgba(255,255,255,0.8)' }}>만들 제품 유형을 선택하면<br/>연구팀이 실시간으로 실험을 도와드려요</p>
       </div>
 
       {dictCount > 0 && (
         <div className="rounded-lg p-3 mb-4"
-          style={{ background: '#EFF6FF', border: '1px solid #DBEAFE' }}>
-          <p className="text-xs font-semibold" style={{ color: '#1D4ED8' }}>📌 성분사전에서 {dictCount}개 성분 선택됨</p>
-          <p className="text-[10px] mt-0.5" style={{ color: '#3B82F6' }}>제품 유형을 선택하면 배합에 빠르게 추가할 수 있어요</p>
+          style={{ background: '#E6F1EC', border: '1px solid #C8E3DA' }}>
+          <p className="text-xs font-semibold" style={{ color: '#1E4D38' }}>📌 성분사전에서 {dictCount}개 성분 선택됨</p>
+          <p className="text-[10px] mt-0.5" style={{ color: '#2E6F52' }}>제품 유형을 선택하면 배합에 빠르게 추가할 수 있어요</p>
         </div>
       )}
 
@@ -100,10 +100,10 @@ function Step1({ onSelect, savedFormulas, labDictIds, onOpenNotebook, researcher
         className="w-full flex items-center gap-3 p-4 rounded-xl mb-5 transition-all active:scale-[0.98]"
         style={SURFACE}>
         <div className="w-11 h-11 rounded-xl flex items-center justify-center text-2xl flex-shrink-0"
-          style={{ background: '#F4F4F5' }}>📓</div>
+          style={{ background: '#E6EEE9' }}>📓</div>
         <div className="flex-1 min-w-0 text-left">
           <div className="flex items-center gap-1.5">
-            <p className="font-bold text-sm" style={{ color: '#171717' }}>실험노트</p>
+            <p className="font-bold text-sm" style={{ color: '#16201C' }}>실험노트</p>
             {pendingNotes > 0 && (
               <span className="px-1.5 py-0.5 rounded-full"
                 style={{ fontSize: 9, fontWeight: 700, background: '#FFFBEB', color: '#B45309', border: '1px solid #FDE68A' }}>
@@ -111,29 +111,29 @@ function Step1({ onSelect, savedFormulas, labDictIds, onOpenNotebook, researcher
               </span>
             )}
           </div>
-          <p className="text-[10px] mt-0.5 truncate" style={{ color: '#888888' }}>
+          <p className="text-[10px] mt-0.5 truncate" style={{ color: '#5F6B65' }}>
             {expCount > 0
               ? `실험 ${expCount}건 · 최근: ${latest.icon} ${latest.name}`
               : '실험 기록을 남기고 재실험까지 이어가요'}
           </p>
         </div>
-        <span style={{ fontSize: 13, color: '#BBBBBB' }}>→</span>
+        <span style={{ fontSize: 13, color: '#93A29A' }}>→</span>
       </button>
 
       <ResearcherIntro affinity={researcherAffinity} />
 
-      <p className="text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: '#888888' }}>카테고리 선택</p>
+      <p className="text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: '#5F6B65' }}>카테고리 선택</p>
       <div className="grid grid-cols-3 gap-3">
         {PRODUCT_TREE.map((l1) => (
           <button key={l1.id} onClick={() => onSelect(l1)}
-            className="flex flex-col items-center gap-2 p-4 rounded-lg transition-all active:scale-95"
+            className="flex flex-col items-center gap-2 p-4 rounded-2xl transition-all active:scale-95"
             style={{ ...SURFACE, minHeight: 130 }}>
-            <div className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl"
-              style={{ background: '#F4F4F5' }}>
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl"
+              style={{ background: `${l1.color}22` }}>
               {l1.icon}
             </div>
-            <span className="font-semibold text-sm" style={{ color: '#171717' }}>{l1.label}</span>
-            <span className="text-[10px] text-center leading-snug" style={{ color: '#888888' }}>{l1.desc}</span>
+            <span className="font-semibold text-sm" style={{ color: '#16201C' }}>{l1.label}</span>
+            <span className="text-[10px] text-center leading-snug" style={{ color: '#5F6B65' }}>{l1.desc}</span>
           </button>
         ))}
       </div>
@@ -145,27 +145,27 @@ function Step2({ l1, onSelect, onBack }) {
   return (
     <div className="px-4 pt-3 pb-6">
       <div className="flex items-center gap-2 mb-4">
-        <button onClick={onBack} className="text-sm font-semibold" style={{ color: '#888888' }}>←</button>
+        <button onClick={onBack} className="text-sm font-semibold" style={{ color: '#5F6B65' }}>←</button>
         <div className="flex items-center gap-2">
           <span className="text-xl">{l1.icon}</span>
-          <span className="font-bold text-base" style={{ color: '#171717' }}>{l1.label}</span>
+          <span className="font-bold text-base" style={{ color: '#16201C' }}>{l1.label}</span>
         </div>
       </div>
 
-      <p className="text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: '#888888' }}>제품군 선택</p>
+      <p className="text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: '#5F6B65' }}>제품군 선택</p>
       <div className="grid grid-cols-2 gap-2.5">
         {l1.children.map((l2) => (
           <button key={l2.id} onClick={() => onSelect(l2)}
             className="flex flex-col items-center gap-2 p-4 rounded-lg transition-all active:scale-[0.96]"
             style={{ ...SURFACE, minHeight: 120 }}>
             <div className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl"
-              style={{ background: '#F4F4F5' }}>
+              style={{ background: '#E6EEE9' }}>
               {l2.icon}
             </div>
             <div className="text-center">
-              <p className="font-semibold text-sm" style={{ color: '#171717' }}>{l2.label}</p>
+              <p className="font-semibold text-sm" style={{ color: '#16201C' }}>{l2.label}</p>
               <span className="inline-block text-[10px] font-semibold px-2 py-0.5 rounded mt-1"
-                style={{ background: '#F4F4F5', color: '#444444' }}>
+                style={{ background: '#E6EEE9', color: '#445048' }}>
                 {l2.children.length}종
               </span>
             </div>
@@ -179,25 +179,25 @@ function Step2({ l1, onSelect, onBack }) {
 function Step3({ l1, l2, onSelect, onBack }) {
   return (
     <div className="px-4 pt-3 pb-6">
-      <div className="flex items-center gap-1.5 mb-4 text-sm font-semibold flex-wrap" style={{ color: '#888888' }}>
-        <button onClick={onBack} style={{ color: '#0072F5' }}>← {l1.label}</button>
-        <span style={{ color: '#E5E5E5', margin: '0 2px' }}>/</span>
-        <span className="font-bold" style={{ color: '#171717' }}>{l2.label}</span>
+      <div className="flex items-center gap-1.5 mb-4 text-sm font-semibold flex-wrap" style={{ color: '#5F6B65' }}>
+        <button onClick={onBack} style={{ color: '#1B6E63' }}>← {l1.label}</button>
+        <span style={{ color: '#DCE3DE', margin: '0 2px' }}>/</span>
+        <span className="font-bold" style={{ color: '#16201C' }}>{l2.label}</span>
       </div>
 
-      <p className="text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: '#888888' }}>제품 유형 선택</p>
+      <p className="text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: '#5F6B65' }}>제품 유형 선택</p>
       <div className="grid grid-cols-2 gap-2.5">
         {l2.children.map((l3) => (
           <button key={l3.id} onClick={() => onSelect(l3)}
             className="flex flex-col items-start gap-2 p-4 rounded-lg transition-all active:scale-95"
             style={{ ...SURFACE, minHeight: 110 }}>
             <div className="w-10 h-10 rounded-lg flex items-center justify-center text-2xl"
-              style={{ background: '#F4F4F5' }}>
+              style={{ background: '#E6EEE9' }}>
               {l3.icon}
             </div>
             <div>
-              <p className="font-semibold text-sm leading-tight" style={{ color: '#171717' }}>{l3.label}</p>
-              <p className="text-[10px] mt-0.5 leading-snug" style={{ color: '#888888' }}>{l3.desc}</p>
+              <p className="font-semibold text-sm leading-tight" style={{ color: '#16201C' }}>{l3.label}</p>
+              <p className="text-[10px] mt-0.5 leading-snug" style={{ color: '#5F6B65' }}>{l3.desc}</p>
             </div>
           </button>
         ))}
@@ -225,24 +225,24 @@ function BuildStep({ l1, l2, l3, formula, onAdd, onRemove, onNext, onBack, onIng
   return (
     <div>
       <div className="sticky top-0 z-10 px-4 pt-3 pb-2" style={STICKY_HEADER}>
-        <div className="flex items-center gap-1 text-xs font-semibold mb-2 flex-wrap" style={{ color: '#888888' }}>
-          <button onClick={onBack} style={{ color: '#0072F5' }}>← 변경</button>
-          <span style={{ color: '#E5E5E5', margin: '0 2px' }}>/</span>
+        <div className="flex items-center gap-1 text-xs font-semibold mb-2 flex-wrap" style={{ color: '#5F6B65' }}>
+          <button onClick={onBack} style={{ color: '#1B6E63' }}>← 변경</button>
+          <span style={{ color: '#DCE3DE', margin: '0 2px' }}>/</span>
           <span>{l1.label}</span>
-          <span style={{ color: '#E5E5E5', margin: '0 2px' }}>/</span>
+          <span style={{ color: '#DCE3DE', margin: '0 2px' }}>/</span>
           <span>{l2.label}</span>
-          <span style={{ color: '#E5E5E5', margin: '0 2px' }}>/</span>
-          <span className="font-bold" style={{ color: '#171717' }}>{l3.label}</span>
+          <span style={{ color: '#DCE3DE', margin: '0 2px' }}>/</span>
+          <span className="font-bold" style={{ color: '#16201C' }}>{l3.label}</span>
         </div>
 
         <div className="relative mb-2">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm" style={{ color: '#888888' }}>🔍</span>
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm" style={{ color: '#5F6B65' }}>🔍</span>
           <input value={search} onChange={(e) => setSearch(e.target.value)}
             placeholder="성분명, 기능, 비타민 C 등 검색..."
             className="w-full pl-9 pr-9 py-2.5 rounded-md text-sm outline-none"
-            style={{ background: '#FFFFFF', border: '1px solid #E5E5E5', color: '#171717' }} />
+            style={{ background: '#FFFFFF', border: '1px solid #DCE3DE', color: '#16201C' }} />
           {search && (
-            <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-sm" style={{ color: '#888888' }}>✕</button>
+            <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-sm" style={{ color: '#5F6B65' }}>✕</button>
           )}
         </div>
 
@@ -250,8 +250,8 @@ function BuildStep({ l1, l2, l3, formula, onAdd, onRemove, onNext, onBack, onIng
           <button onClick={() => setCatFilter('all')}
             className="flex-shrink-0 px-3 py-1.5 rounded text-xs font-semibold whitespace-nowrap"
             style={catFilter === 'all'
-              ? { background: '#171717', color: 'white' }
-              : { background: '#FFFFFF', color: '#444444', border: '1px solid #E5E5E5' }}>
+              ? { background: '#16201C', color: 'white' }
+              : { background: '#FFFFFF', color: '#445048', border: '1px solid #DCE3DE' }}>
             전체
           </button>
           {Object.entries(CATEGORIES).map(([key, cat]) => (
@@ -264,14 +264,14 @@ function BuildStep({ l1, l2, l3, formula, onAdd, onRemove, onNext, onBack, onIng
             </button>
           ))}
         </div>
-        <p className="text-[10px] mt-1" style={{ color: '#888888' }}>{filtered.length}종</p>
+        <p className="text-[10px] mt-1" style={{ color: '#5F6B65' }}>{filtered.length}종</p>
       </div>
 
       <GoalPicker goals={goals} onChange={onGoalsChange} />
 
       {dictIngredients.length > 0 && (
         <div className="px-4 pt-3 pb-2">
-          <p className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{ color: '#888888' }}>📌 성분사전 선택 항목</p>
+          <p className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{ color: '#5F6B65' }}>📌 성분사전 선택 항목</p>
           <div className="flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
             {dictIngredients.map((ing) => {
               const inFormula = selectedIds.has(ing.id);
@@ -280,8 +280,8 @@ function BuildStep({ l1, l2, l3, formula, onAdd, onRemove, onNext, onBack, onIng
                   onClick={() => inFormula ? onRemove(ing.id) : onAdd(ing)}
                   className="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-md text-xs font-semibold transition-all active:scale-95"
                   style={inFormula
-                    ? { background: '#0072F5', color: 'white' }
-                    : { background: '#FFFFFF', color: '#171717', border: '1px solid #E5E5E5' }}>
+                    ? { background: '#1B6E63', color: 'white' }
+                    : { background: '#FFFFFF', color: '#16201C', border: '1px solid #DCE3DE' }}>
                   <span>{ing.emoji}</span>
                   <span>{ing.name}</span>
                   {inFormula && <span className="opacity-80">✓</span>}
@@ -307,7 +307,7 @@ function BuildStep({ l1, l2, l3, formula, onAdd, onRemove, onNext, onBack, onIng
         <div className="fixed bottom-16 left-1/2 -translate-x-1/2 w-full max-w-[480px] px-4 z-20">
           <button onClick={onNext}
             className="w-full py-4 rounded-lg text-white font-bold text-sm flex items-center justify-center gap-2"
-            style={{ background: '#0072F5', boxShadow: '0 4px 16px rgba(0,114,245,0.35)' }}>
+            style={{ background: '#1B6E63', boxShadow: '0 4px 16px rgba(0,114,245,0.35)' }}>
             ⚗️ {formula.length}개 성분 선택됨 — 배합 확인하기
           </button>
         </div>
@@ -349,19 +349,19 @@ function FormulaGuideDrawer({ l3, onClose }) {
         style={{
           width: 'min(320px, 88vw)',
           background: '#FFFFFF',
-          borderLeft: '1px solid #E5E5E5',
+          borderLeft: '1px solid #DCE3DE',
           boxShadow: '-4px 0 20px rgba(0,0,0,0.08)',
           animation: 'slideInRight 0.18s ease-out',
         }}>
         <div className="flex items-center justify-between px-4 pt-5 pb-3 flex-shrink-0"
-          style={{ borderBottom: '1px solid #E5E5E5' }}>
+          style={{ borderBottom: '1px solid #DCE3DE' }}>
           <div>
-            <p className="font-bold text-sm" style={{ color: '#171717' }}>📋 배합 가이드</p>
-            <p className="text-[10px] mt-0.5" style={{ color: '#888888' }}>{l3.icon} {l3.label} 보편적 비율</p>
+            <p className="font-bold text-sm" style={{ color: '#16201C' }}>📋 배합 가이드</p>
+            <p className="text-[10px] mt-0.5" style={{ color: '#5F6B65' }}>{l3.icon} {l3.label} 보편적 비율</p>
           </div>
           <button onClick={onClose}
             className="w-8 h-8 rounded-md flex items-center justify-center font-bold text-sm"
-            style={{ background: '#F4F4F5', color: '#444444' }}>✕</button>
+            style={{ background: '#E6EEE9', color: '#445048' }}>✕</button>
         </div>
         <div className="px-4 py-2.5 flex-shrink-0"
           style={{ background: '#FFFBEB', borderBottom: '1px solid #FDE68A' }}>
@@ -377,23 +377,23 @@ function FormulaGuideDrawer({ l3, onClose }) {
             const barW = Math.min((pct / maxPct) * 100, 100);
             return (
               <div key={catKey} className="rounded-md p-3"
-                style={{ background: '#FFFFFF', border: '1px solid #E5E5E5', borderLeft: `3px solid ${cat.color}` }}>
+                style={{ background: '#FFFFFF', border: '1px solid #DCE3DE', borderLeft: `3px solid ${cat.color}` }}>
                 <div className="flex items-center justify-between mb-1.5">
                   <div className="flex items-center gap-1.5">
                     <span className="text-base">{cat.icon}</span>
                     <span className="text-xs font-semibold" style={{ color: cat.color }}>{cat.label}</span>
                   </div>
-                  <span className="text-sm font-bold" style={{ color: '#171717' }}>~{pct}%</span>
+                  <span className="text-sm font-bold" style={{ color: '#16201C' }}>~{pct}%</span>
                 </div>
-                <div className="w-full h-1.5 rounded-full overflow-hidden mb-1.5" style={{ background: '#F4F4F5' }}>
+                <div className="w-full h-1.5 rounded-full overflow-hidden mb-1.5" style={{ background: '#E6EEE9' }}>
                   <div className="h-full rounded-full" style={{ width: `${barW}%`, background: cat.color, opacity: 0.8 }} />
                 </div>
-                {note && <p className="text-[10px] leading-snug" style={{ color: '#888888' }}>{note}</p>}
+                {note && <p className="text-[10px] leading-snug" style={{ color: '#5F6B65' }}>{note}</p>}
               </div>
             );
           })}
           <div className="rounded-md p-3 mt-1"
-            style={{ background: '#EFF6FF', border: '1px solid #DBEAFE' }}>
+            style={{ background: '#E6F1EC', border: '1px solid #C8E3DA' }}>
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-blue-700">가이드 합계</span>
               <span className="text-sm font-bold text-blue-700">{entries.reduce((s, [, v]) => s + v, 0).toFixed(1)}%</span>
@@ -479,20 +479,20 @@ function FormulaStep({ l1, l2, l3, formula, onBack, onPctChange, onRemove, onSav
   return (
     <div className="px-4 pt-3 pb-36">
       <div className="flex items-center justify-between mb-4">
-        <button onClick={onBack} className="flex items-center gap-1.5 text-sm font-semibold" style={{ color: '#888888' }}>← 성분 선택</button>
+        <button onClick={onBack} className="flex items-center gap-1.5 text-sm font-semibold" style={{ color: '#5F6B65' }}>← 성분 선택</button>
         <div className="flex items-center gap-2">
           <button onClick={() => setGuideOpen(true)}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all active:scale-95"
             style={guideOpen
-              ? { background: '#0072F5', color: 'white' }
-              : { background: '#FFFFFF', color: '#444444', border: '1px solid #E5E5E5' }}>
+              ? { background: '#1B6E63', color: 'white' }
+              : { background: '#FFFFFF', color: '#445048', border: '1px solid #DCE3DE' }}>
             <span>📋</span><span>배합 가이드</span>
           </button>
           <div className="flex items-center gap-1">
             <span className="text-lg">{l3.icon}</span>
             <div className="flex flex-col items-end">
-              <span className="font-bold text-xs" style={{ color: '#171717' }}>{l3.label}</span>
-              <span className="text-[10px]" style={{ color: '#888888' }}>{l1.label} · {l2.label}</span>
+              <span className="font-bold text-xs" style={{ color: '#16201C' }}>{l3.label}</span>
+              <span className="text-[10px]" style={{ color: '#5F6B65' }}>{l1.label} · {l2.label}</span>
             </div>
           </div>
         </div>
@@ -516,39 +516,39 @@ function FormulaStep({ l1, l2, l3, formula, onBack, onPctChange, onRemove, onSav
 
       <div className="rounded-lg p-4 mb-4" style={SURFACE}>
         <div className="flex items-center justify-between mb-2">
-          <p className="font-semibold text-sm" style={{ color: '#171717' }}>총 배합 함량</p>
+          <p className="font-semibold text-sm" style={{ color: '#16201C' }}>총 배합 함량</p>
           <p className="font-bold text-lg" style={{ color: pctColor }}>{total.toFixed(1)}%</p>
         </div>
-        <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: '#F4F4F5' }}>
+        <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: '#E6EEE9' }}>
           <div className="h-full rounded-full transition-all" style={{ width: `${Math.min(total, 100)}%`, background: pctColor }} />
         </div>
         <div className="flex justify-between mt-1">
-          <span className="text-[10px]" style={{ color: '#888888' }}>0%</span>
+          <span className="text-[10px]" style={{ color: '#5F6B65' }}>0%</span>
           {total > 100
             ? <span className="text-[10px] font-bold" style={{ color: '#DC2626' }}>100% 초과!</span>
-            : <span className="text-[10px]" style={{ color: '#888888' }}>잔량 {(100 - total).toFixed(1)}%</span>}
-          <span className="text-[10px]" style={{ color: '#888888' }}>100%</span>
+            : <span className="text-[10px]" style={{ color: '#5F6B65' }}>잔량 {(100 - total).toFixed(1)}%</span>}
+          <span className="text-[10px]" style={{ color: '#5F6B65' }}>100%</span>
         </div>
       </div>
 
       <ResearcherPanel formula={formula} l3={l3} goals={goals} variant="inline" />
 
       <div className="mb-4">
-        <p className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{ color: '#888888' }}>조절 단위</p>
+        <p className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{ color: '#5F6B65' }}>조절 단위</p>
         <div className="flex gap-1.5">
           {UNIT_OPTIONS.map((opt) => (
             <button key={opt.value} onClick={() => setUnit(opt.value)}
               className="flex-1 py-2 rounded-md text-xs font-semibold transition-all active:scale-95"
               style={unit === opt.value
-                ? { background: '#171717', color: 'white' }
-                : { background: '#FFFFFF', color: '#444444', border: '1px solid #E5E5E5' }}>
+                ? { background: '#16201C', color: 'white' }
+                : { background: '#FFFFFF', color: '#445048', border: '1px solid #DCE3DE' }}>
               {opt.label}
             </button>
           ))}
         </div>
       </div>
 
-      <p className="text-[10px] font-bold uppercase tracking-widest mb-2.5" style={{ color: '#888888' }}>성분 함량 조절</p>
+      <p className="text-[10px] font-bold uppercase tracking-widest mb-2.5" style={{ color: '#5F6B65' }}>성분 함량 조절</p>
       <div className="space-y-2 mb-5">
         {formula.map(({ ingredient, pct }) => {
           const cat = CATEGORIES[ingredient.category] || {};
@@ -557,11 +557,11 @@ function FormulaStep({ l1, l2, l3, formula, onBack, onPctChange, onRemove, onSav
             <div key={ingredient.id} className="rounded-lg overflow-hidden" style={SURFACE}>
               <div className="flex items-center px-4 pt-3 pb-1.5">
                 <div className="w-8 h-8 rounded-md flex items-center justify-center text-lg mr-2.5 flex-shrink-0"
-                  style={{ background: '#F4F4F5' }}>
+                  style={{ background: '#E6EEE9' }}>
                   {ingredient.emoji}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-sm truncate" style={{ color: '#171717' }}>{ingredient.name}</p>
+                  <p className="font-semibold text-sm truncate" style={{ color: '#16201C' }}>{ingredient.name}</p>
                   <p className="text-[10px]" style={{ color: cat.color }}>{cat.icon} {cat.label}</p>
                 </div>
                 <button onClick={() => onRemove(ingredient.id)}
@@ -570,21 +570,21 @@ function FormulaStep({ l1, l2, l3, formula, onBack, onPctChange, onRemove, onSav
               </div>
               <div className="px-4 pb-3">
                 {ingredient.concentration && (
-                  <p className="text-[10px] mb-1.5" style={{ color: '#888888' }}>권장 농도: {ingredient.concentration}</p>
+                  <p className="text-[10px] mb-1.5" style={{ color: '#5F6B65' }}>권장 농도: {ingredient.concentration}</p>
                 )}
                 <div className="flex items-center gap-2">
-                  <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: '#F4F4F5' }}>
+                  <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: '#E6EEE9' }}>
                     <div className="h-full rounded-full transition-all"
-                      style={{ width: `${Math.min((pct / (conc.max || Math.max(pct, 5))) * 100, 100)}%`, background: cat.color || '#0072F5' }} />
+                      style={{ width: `${Math.min((pct / (conc.max || Math.max(pct, 5))) * 100, 100)}%`, background: cat.color || '#1B6E63' }} />
                   </div>
                   <div className="flex items-center gap-1 flex-shrink-0">
                     <button onClick={() => adjust(ingredient.id, -1)}
                       className="w-7 h-7 rounded-md font-bold text-sm flex items-center justify-center"
-                      style={{ background: '#F4F4F5', color: '#444444' }}>−</button>
-                    <span className="text-sm font-bold w-16 text-center" style={{ color: '#171717' }}>{pct.toFixed(2)}%</span>
+                      style={{ background: '#E6EEE9', color: '#445048' }}>−</button>
+                    <span className="text-sm font-bold w-16 text-center" style={{ color: '#16201C' }}>{pct.toFixed(2)}%</span>
                     <button onClick={() => adjust(ingredient.id, +1)}
                       className="w-7 h-7 rounded-md font-bold text-sm flex items-center justify-center text-white"
-                      style={{ background: cat.color || '#0072F5' }}>+</button>
+                      style={{ background: cat.color || '#1B6E63' }}>+</button>
                   </div>
                 </div>
               </div>
@@ -595,11 +595,11 @@ function FormulaStep({ l1, l2, l3, formula, onBack, onPctChange, onRemove, onSav
 
       {painPoints.length > 0 && (
         <div className="rounded-lg p-4 mb-3" style={SURFACE}>
-          <p className="font-semibold text-sm mb-2.5" style={{ color: '#171717' }}>🎯 이 배합이 해결하는 피부 고민</p>
+          <p className="font-semibold text-sm mb-2.5" style={{ color: '#16201C' }}>🎯 이 배합이 해결하는 피부 고민</p>
           <div className="flex flex-wrap gap-1.5">
             {painPoints.map((p) => (
               <span key={p} className="text-xs px-2.5 py-1 rounded font-medium"
-                style={{ background: '#F4F4F5', color: '#444444', border: '1px solid #E5E5E5' }}>
+                style={{ background: '#E6EEE9', color: '#445048', border: '1px solid #DCE3DE' }}>
                 {p}
               </span>
             ))}
@@ -609,13 +609,13 @@ function FormulaStep({ l1, l2, l3, formula, onBack, onPctChange, onRemove, onSav
 
       {matched.length > 0 && (
         <div className="rounded-lg p-4 mb-3" style={SURFACE}>
-          <p className="font-semibold text-sm mb-2.5" style={{ color: '#171717' }}>⭐ 시너지 조합 발견</p>
+          <p className="font-semibold text-sm mb-2.5" style={{ color: '#16201C' }}>⭐ 시너지 조합 발견</p>
           <div className="space-y-2">
             {matched.map((s, i) => (
               <div key={i} className="rounded-md p-3"
                 style={{ background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
-                <p className="font-semibold text-xs mb-1" style={{ color: '#171717' }}>{s.label}</p>
-                <p className="text-xs leading-relaxed" style={{ color: '#444444' }}>{s.effect}</p>
+                <p className="font-semibold text-xs mb-1" style={{ color: '#16201C' }}>{s.label}</p>
+                <p className="text-xs leading-relaxed" style={{ color: '#445048' }}>{s.effect}</p>
               </div>
             ))}
           </div>
@@ -634,14 +634,14 @@ function FormulaStep({ l1, l2, l3, formula, onBack, onPctChange, onRemove, onSav
           className="flex-1 py-3.5 rounded-lg font-semibold text-sm flex items-center justify-center gap-1.5 transition-all active:scale-[0.97]"
           style={copied
             ? { background: '#F0FDF4', color: '#15803D', border: '1px solid #BBF7D0' }
-            : { background: '#FFFFFF', color: '#444444', border: '1px solid #E5E5E5' }}>
+            : { background: '#FFFFFF', color: '#445048', border: '1px solid #DCE3DE' }}>
           {copied ? '✓ 복사됨!' : '📋 복사'}
         </button>
         <button onClick={handleSave}
           className="flex-1 py-3.5 rounded-lg font-bold text-sm text-white flex items-center justify-center gap-1.5 transition-all active:scale-[0.97]"
           style={saved
             ? { background: '#15803D' }
-            : { background: '#0072F5', boxShadow: '0 4px 12px rgba(0,114,245,0.3)' }}>
+            : { background: '#1B6E63', boxShadow: '0 4px 12px rgba(0,114,245,0.3)' }}>
           {saved ? '✓ 저장됨!' : '💾 저장'}
         </button>
       </div>
@@ -667,7 +667,7 @@ function IngredientModal({ ingredient, onClose, inLab, onToggle }) {
           style={{ borderTop: '1px solid #F0F0F0' }}>
           <button onClick={() => { onToggle(ingredient); onClose(); }}
             className="w-full py-3.5 rounded-xl font-bold text-sm text-white"
-            style={{ background: inLab ? '#DC2626' : '#0072F5' }}>
+            style={{ background: inLab ? '#DC2626' : '#1B6E63' }}>
             {inLab ? '제거' : '배합에 추가 +'}
           </button>
         </div>

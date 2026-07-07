@@ -13,7 +13,7 @@ export const RESEARCHERS = [
     desc: '15년차 처방 전문가. 업계에서 가장 방대한 시너지·충돌 조합 데이터를 보유하고 있어요.',
   },
   {
-    id: 'nam', name: '남정균', title: '연구과장', emoji: '🧑‍💼', color: '#0072F5',
+    id: 'nam', name: '남정균', title: '연구과장', emoji: '🧑‍💼', color: '#4C7A9E',
     ability: '배합 밸런스 관리',
     desc: '제형 안정화 담당. 총 함량과 필수 카테고리, 가이드 대비 밸런스를 꼼꼼히 챙겨요.',
   },
@@ -28,7 +28,7 @@ export const RESEARCHERS = [
     desc: '트렌드에 밝은 팀 막내. 지금 배합에 딱 어울리는 다음 성분을 제안해요.',
   },
   {
-    id: 'pyo', name: '표소싱', title: '소싱 매니저', emoji: '🤝', color: '#16a34a',
+    id: 'pyo', name: '표소싱', title: '소싱 매니저', emoji: '🤝', color: '#9C6B30',
     ability: '원료 소싱·제조사 연결',
     desc: '원료사 인맥왕. 성분 유래 정보와 비건 대체 원료, 수급처를 연결해줘요.',
   },

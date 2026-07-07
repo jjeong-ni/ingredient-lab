@@ -4,8 +4,8 @@
 
 body {
   font-family: 'Nunito Variable', 'Nunito', -apple-system, system-ui, sans-serif;
-  background: #FAFAFA;
-  color: #171717;
+  background: #EFF3F1;
+  color: #16201C;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
@@ -15,6 +15,37 @@ body {
   min-height: 100vh;
   max-width: 480px;
   margin: 0 auto;
-  background: #FAFAFA;
+  background: #EFF3F1;
   position: relative;
 }
+
+.hero-glass {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #123F38 0%, #1B6E63 55%, #3E9C82 100%);
+  color: #F3FBF7;
+}
+.hero-glass::before {
+  content: "";
+  position: absolute;
+  top: -45%;
+  right: -12%;
+  width: 62%;
+  padding-bottom: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.32), rgba(255,255,255,0) 65%);
+  pointer-events: none;
+}
+.hero-glass::after {
+  content: "";
+  position: absolute;
+  left: -18%;
+  bottom: -50%;
+  width: 58%;
+  padding-bottom: 58%;
+  border-radius: 40%;
+  background: rgba(255,255,255,0.07);
+  transform: rotate(18deg);
+  pointer-events: none;
+}
+.hero-glass > * { position: relative; z-index: 1; }
