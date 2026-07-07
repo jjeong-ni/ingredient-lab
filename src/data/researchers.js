@@ -3,6 +3,7 @@ import { parseConc } from './productTypes';
 import { getOrigin } from '../utils/origin';
 import { computeGoalScore, suggestForGoal } from './goals';
 import { estimateFormulaCost, formatKRW } from './costs';
+import { computeStability } from './stability';
 
 /** 실험을 도와주는 연구팀 5인 */
 export const RESEARCHERS = [
@@ -170,6 +171,22 @@ export function analyzeFormula(formula, l3, goals) {
   const lowSafeCount = items.filter((f) => f.ingredient.safety <= 3).length;
   if (items.length >= 4 && lowSafeCount === 0) {
     msgs.push({ rid: 'oh', type: 'praise', text: '전 성분이 안전성 우수 등급이에요. 민감성 피부 라인으로도 손색없어요! ✅' });
+  }
+
+  const stability = computeStability(items);
+  if (stability.phConflict) {
+    msgs.push({
+      rid: 'oh', type: 'warn',
+      text: `${stability.phContributors.map((it) => it.ingredient.name).join(', ')}는 안정적인 pH 요구 범위가 서로 겹치지 않아요. 한 제형에 넣으면 효능이 깨질 수 있어요.`,
+    });
+  } else if (stability.phRange) {
+    msgs.push({ rid: 'oh', type: 'info', text: `이 배합은 pH ${stability.phRange[0]}~${stability.phRange[1]}로 조정해야 활성 성분들이 안정적으로 작동해요.` });
+  }
+  if (stability.oxidationRisk) {
+    msgs.push({
+      rid: 'oh', type: 'warn',
+      text: `${stability.oxidationProne.map((it) => it.ingredient.name).join(', ')}는 산화되기 쉬운데 항산화제가 없어요. 토코페롤이나 페룰산 추가를 권장해요.`,
+    });
   }
 
   /* ── 금아리 주임: 창의 제안 ─────────────────────────── */

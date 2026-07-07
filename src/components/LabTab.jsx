@@ -7,6 +7,7 @@ import LabNotebook from './LabNotebook';
 import { GoalPicker, GoalScoreCard } from './GoalPanel';
 import CostPanel from './CostPanel';
 import { estimateFormulaCost } from '../data/costs';
+import StabilityPanel from './StabilityPanel';
 
 const SURFACE = {
   background: '#FFFFFF',
@@ -505,6 +506,7 @@ function FormulaStep({ l1, l2, l3, formula, onBack, onPctChange, onRemove, onSav
       {guideOpen && <FormulaGuideDrawer l3={l3} onClose={() => setGuideOpen(false)} />}
 
       <GoalScoreCard goals={goals} formula={formula} />
+      <StabilityPanel formula={formula} />
       <CostPanel formula={formula} />
 
       <div className="rounded-lg p-4 mb-4" style={SURFACE}>
