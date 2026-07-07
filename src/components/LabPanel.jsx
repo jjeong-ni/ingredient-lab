@@ -28,7 +28,7 @@ export default function LabPanel({ selectedIds, onAdd }) {
           <div className="flex flex-wrap gap-1.5">
             {painPoints.map((p) => (
               <span key={p} className="text-xs px-2.5 py-1 rounded-full font-medium"
-                style={{ background: '#EFF6FF', color: '#3B82F6' }}>
+                style={{ background: '#E6F1EC', color: '#2E6F52' }}>
                 {p}
               </span>
             ))}

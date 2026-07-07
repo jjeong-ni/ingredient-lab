@@ -1,91 +1,119 @@
 import { CATEGORIES } from '../data/ingredients';
+import { getOrigin } from '../utils/origin';
 
 const safetyInfo = (n) => {
-  if (n >= 5) return { text: '안전', dot: '#059669', bg: '#D1FAE5', color: '#059669' };
-  if (n >= 4) return { text: '양호', dot: '#2563EB', bg: '#DBEAFE', color: '#2563EB' };
-  if (n >= 3) return { text: '주의', dot: '#D97706', bg: '#FEF3C7', color: '#D97706' };
-  return       { text: '경고', dot: '#DC2626', bg: '#FEE2E2', color: '#DC2626' };
+  if (n >= 5) return { text: '안전', dot: '#16a34a', bg: '#F0FDF4', color: '#15803D' };
+  if (n >= 4) return { text: '양호', dot: '#2563EB', bg: '#E6F1EC', color: '#1E4D38' };
+  if (n >= 3) return { text: '주의', dot: '#D97706', bg: '#FFFBEB', color: '#B45309' };
+  return       { text: '경고', dot: '#DC2626', bg: '#FEF2F2', color: '#B91C1C' };
 };
 
-/* ─── 상세 모달 뷰 ─────────────────────────────────────────────── */
-function ModalView({ ingredient }) {
+const CARD = {
+  background: '#FFFFFF',
+  border: '1px solid #EBEBEB',
+  boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
+};
+
+function ModalView({ ingredient, isFavorite, onFavoriteToggle }) {
   const cat = CATEGORIES[ingredient.category] || {};
   const safety = safetyInfo(ingredient.safety);
+  const origin = getOrigin(ingredient);
+
   return (
-    <div className="px-4 pb-2">
-      {/* 헤더 카드 */}
-      <div className="rounded-2xl p-4 mb-4 flex items-start gap-3"
-        style={{ background: cat.bg || '#F8FAFC' }}>
-        <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl flex-shrink-0"
-          style={{ background: 'rgba(255,255,255,0.7)' }}>
-          {ingredient.emoji}
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-1.5 mb-1 flex-wrap">
-            <span className="text-xs font-bold px-2.5 py-0.5 rounded-full"
-              style={{ background: 'rgba(255,255,255,0.8)', color: cat.color }}>
-              {cat.icon} {cat.label}
-            </span>
-            <span className="text-xs font-bold px-2.5 py-0.5 rounded-full"
-              style={{ background: safety.bg, color: safety.color }}>
-              {safety.text}
-            </span>
+    <div>
+      {/* Hero */}
+      <div className="flex flex-col items-center pt-8 pb-7 px-6 relative"
+        style={{ background: '#F8F8F8' }}>
+        <div className="relative mb-4">
+          <div className="w-24 h-24 rounded-3xl flex items-center justify-center"
+            style={{ background: '#FFFFFF', boxShadow: '0 4px 24px rgba(0,0,0,0.09)', fontSize: 48 }}>
+            {ingredient.emoji}
           </div>
-          <h2 className="font-extrabold text-gray-900 text-base leading-tight">{ingredient.name}</h2>
-          <p className="text-xs text-gray-400 mt-0.5 truncate">{ingredient.nameEn}</p>
+          {onFavoriteToggle && (
+            <button onClick={() => onFavoriteToggle(ingredient)}
+              className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full flex items-center justify-center"
+              style={isFavorite
+                ? { background: '#FFF1F2', color: '#E11D48', boxShadow: '0 0 0 2px #FFFFFF' }
+                : { background: '#E6EEE9', color: '#CCCCCC', boxShadow: '0 0 0 2px #FFFFFF' }}>
+              <span style={{ fontSize: 14 }}>{isFavorite ? '♥' : '♡'}</span>
+            </button>
+          )}
+        </div>
+
+        <h2 style={{ fontWeight: 800, fontSize: 20, color: '#16201C', textAlign: 'center', lineHeight: 1.3, marginBottom: 4 }}>
+          {ingredient.name}
+        </h2>
+        <p style={{ fontSize: 13, color: '#999999', textAlign: 'center', marginBottom: 16 }}>{ingredient.nameEn}</p>
+
+        <div className="flex items-center gap-2 flex-wrap justify-center">
+          <span style={{ fontSize: 12, fontWeight: 700, padding: '6px 14px', borderRadius: 99, background: '#EBEBEB', color: '#555555' }}>
+            {cat.icon} {cat.label}
+          </span>
+          <span style={{ fontSize: 12, fontWeight: 700, padding: '6px 14px', borderRadius: 99, background: safety.bg, color: safety.color }}>
+            {safety.text}
+          </span>
+          {origin && (
+            <span style={{ fontSize: 12, fontWeight: 700, padding: '6px 14px', borderRadius: 99, background: origin.bg, color: origin.color }}>
+              {origin.icon} {origin.label}
+            </span>
+          )}
         </div>
       </div>
 
-      <div className="space-y-3.5">
-        <InfoRow label="기능" value={ingredient.function} />
-        <InfoRow label="추출원" value={ingredient.extraction} />
+      {/* Content */}
+      <div style={{ padding: '24px 24px 8px', display: 'flex', flexDirection: 'column', gap: 24 }}>
+        <Section label="기능">
+          <p style={{ fontSize: 14, lineHeight: 1.7, color: '#333333' }}>{ingredient.function}</p>
+        </Section>
 
-        <div>
-          <SectionLabel>해결 피부 고민</SectionLabel>
-          <div className="flex flex-wrap gap-1.5 mt-1.5">
+        {ingredient.extraction && (
+          <Section label="추출원">
+            <p style={{ fontSize: 14, lineHeight: 1.7, color: '#333333' }}>{ingredient.extraction}</p>
+          </Section>
+        )}
+
+        <Section label="해결 피부 고민">
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 4 }}>
             {ingredient.painPoints.map((p) => (
-              <span key={p} className="text-xs px-2.5 py-1 rounded-full font-semibold"
-                style={{ background: cat.bg || '#F3F4F6', color: cat.color || '#6B7280' }}>
+              <span key={p} style={{ fontSize: 12, fontWeight: 600, padding: '6px 14px', borderRadius: 99, background: '#F2F2F2', color: '#445048' }}>
                 {p}
               </span>
             ))}
           </div>
-        </div>
+        </Section>
 
         {ingredient.tags?.length > 0 && (
-          <div>
-            <SectionLabel>키워드</SectionLabel>
-            <div className="flex flex-wrap gap-1.5 mt-1.5">
+          <Section label="키워드">
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 4 }}>
               {ingredient.tags.map((t) => (
-                <span key={t} className="text-xs px-2.5 py-1 rounded-full bg-gray-100 text-gray-500 font-medium">
+                <span key={t} style={{ fontSize: 12, padding: '5px 12px', borderRadius: 99, background: '#EFF3F1', color: '#5F6B65', border: '1px solid #EBEBEB' }}>
                   #{t}
                 </span>
               ))}
             </div>
-          </div>
+          </Section>
         )}
 
-        <div className="grid grid-cols-2 gap-2">
-          <div className="bg-gray-50 rounded-xl p-3">
-            <p className="text-xs text-gray-400 mb-1">권장 농도</p>
-            <p className="font-bold text-gray-800 text-sm">{ingredient.concentration}</p>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+          <div style={{ borderRadius: 16, padding: '16px 16px', background: '#F8F8F8' }}>
+            <p style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#8B968F', marginBottom: 10 }}>권장 농도</p>
+            <p style={{ fontWeight: 800, fontSize: 15, color: '#16201C' }}>{ingredient.concentration}</p>
           </div>
-          <div className="rounded-xl p-3" style={{ background: safety.bg }}>
-            <p className="text-xs mb-1.5" style={{ color: safety.color, opacity: 0.7 }}>안전도</p>
-            <div className="flex gap-0.5 mb-1">
+          <div style={{ borderRadius: 16, padding: '16px 16px', background: safety.bg }}>
+            <p style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: safety.color, marginBottom: 10 }}>안전도</p>
+            <div style={{ display: 'flex', gap: 4, marginBottom: 8 }}>
               {[1,2,3,4,5].map((i) => (
-                <div key={i} className="flex-1 h-1.5 rounded-full"
-                  style={{ background: i <= ingredient.safety ? safety.dot : '#E5E7EB' }} />
+                <div key={i} style={{ flex: 1, height: 8, borderRadius: 99, background: i <= ingredient.safety ? safety.dot : 'rgba(0,0,0,0.08)' }} />
               ))}
             </div>
-            <p className="font-bold text-xs" style={{ color: safety.color }}>{safety.text}</p>
+            <p style={{ fontWeight: 800, fontSize: 14, color: safety.color }}>{safety.text}</p>
           </div>
         </div>
 
         {ingredient.tip && (
-          <div className="rounded-xl p-3.5" style={{ background: '#FFFBEB', border: '1px solid #FDE68A' }}>
-            <p className="text-xs text-amber-700 leading-relaxed">
-              <span className="font-bold">💡 </span>{ingredient.tip}
+          <div style={{ borderRadius: 16, padding: '16px 18px', background: '#FFFBEB', border: '1px solid #FDE68A' }}>
+            <p style={{ fontSize: 13, color: '#92400E', lineHeight: 1.7 }}>
+              <span style={{ fontWeight: 800 }}>💡 </span>{ingredient.tip}
             </p>
           </div>
         )}
@@ -94,96 +122,64 @@ function ModalView({ ingredient }) {
   );
 }
 
-/* ─── 리스트 카드 ─────────────────────────────────────────────── */
-export default function IngredientCard({ ingredient, onClick, inLab, onLabToggle, modal }) {
+function Section({ label, children }) {
+  return (
+    <div>
+      <p style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#8B968F', marginBottom: 10 }}>{label}</p>
+      {children}
+    </div>
+  );
+}
+
+export default function IngredientCard({ ingredient, onClick, inLab, onLabToggle, modal, isFavorite, onFavoriteToggle }) {
   const cat = CATEGORIES[ingredient.category] || {};
   const safety = safetyInfo(ingredient.safety);
+  const origin = getOrigin(ingredient);
 
-  if (modal) return <ModalView ingredient={ingredient} />;
+  if (modal) return <ModalView ingredient={ingredient} isFavorite={isFavorite} onFavoriteToggle={onFavoriteToggle} />;
 
   return (
     <div
       onClick={() => onClick?.(ingredient)}
-      className="bg-white rounded-2xl cursor-pointer transition-all active:scale-[0.98] overflow-hidden"
-      style={{ boxShadow: '0 1px 8px rgba(0,0,0,0.07)' }}
+      className="cursor-pointer rounded-xl overflow-hidden flex flex-col relative"
+      style={{ ...CARD, minHeight: 148 }}
     >
-      <div className="flex items-stretch">
-        {/* 왼쪽 컬러 영역 */}
-        <div className="flex flex-col items-center justify-center gap-1 py-3 flex-shrink-0"
-          style={{ background: cat.bg || '#F8FAFC', width: 58 }}>
-          <span className="text-2xl leading-none">{ingredient.emoji}</span>
-          <span className="text-[9px] font-bold"
-            style={{ color: cat.color }}>{cat.icon}</span>
-        </div>
+      <div className="absolute top-2 right-2 z-10">
+        <div className="w-2 h-2 rounded-full" style={{ background: safety.dot }} />
+      </div>
 
-        {/* 중간 본문 */}
-        <div className="flex-1 py-3 pl-3 pr-2 min-w-0">
-          {/* 이름 + 카테고리 */}
-          <div className="flex items-center gap-1.5 mb-0.5 flex-wrap">
-            <h3 className="font-bold text-gray-900 text-sm leading-tight">{ingredient.name}</h3>
-            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full flex-shrink-0"
-              style={{ color: cat.color, background: cat.bg || '#F3F4F6' }}>
-              {cat.label}
+      <div className="flex items-center justify-center pt-5 pb-3 flex-shrink-0"
+        style={{ background: '#F6F6F6' }}>
+        <span style={{ fontSize: 36, lineHeight: 1 }}>{ingredient.emoji}</span>
+      </div>
+
+      <div className="flex-1 px-3 pt-2.5 pb-1">
+        <p style={{ fontWeight: 700, fontSize: 12, lineHeight: 1.35, marginBottom: 2, color: '#16201C' }}
+          className="line-clamp-2">
+          {ingredient.name}
+        </p>
+        <p style={{ fontSize: 11, color: '#8B968F', marginBottom: 6 }} className="truncate">{ingredient.nameEn}</p>
+        <div className="flex items-center gap-1 flex-wrap">
+          <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 7px', borderRadius: 99, background: '#F2F2F2', color: '#555555' }}>
+            {cat.icon} {cat.label}
+          </span>
+          {origin && (
+            <span style={{ fontSize: 10, fontWeight: 600, padding: '2px 7px', borderRadius: 99, background: origin.bg, color: origin.color }}>
+              {origin.icon}
             </span>
-          </div>
-
-          {/* INCI */}
-          <p className="text-[11px] text-gray-400 truncate mb-1.5">{ingredient.nameEn}</p>
-
-          {/* 기능 */}
-          <p className="text-xs text-gray-600 leading-snug line-clamp-2 mb-2">{ingredient.function}</p>
-
-          {/* 페인포인트 태그 — 항상 gray 배경으로 가독성 확보 */}
-          <div className="flex gap-1 flex-wrap">
-            {ingredient.painPoints.slice(0, 3).map((p) => (
-              <span key={p} className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-gray-100 text-gray-500">
-                {p}
-              </span>
-            ))}
-            {ingredient.painPoints.length > 3 && (
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-gray-100 text-gray-400 font-medium">
-                +{ingredient.painPoints.length - 3}
-              </span>
-            )}
-          </div>
-        </div>
-
-        {/* 오른쪽: 안전도 점 + 버튼 */}
-        <div className="flex flex-col items-center justify-between py-3 pr-3 pl-1 gap-2 flex-shrink-0">
-          {/* 안전도 — 점 + 짧은 텍스트 */}
-          <div className="flex flex-col items-center gap-0.5">
-            <div className="w-2 h-2 rounded-full" style={{ background: safety.dot }} />
-            <span className="text-[10px] font-bold" style={{ color: safety.color }}>
-              {safety.text}
-            </span>
-          </div>
-
-          {/* 실험실 버튼 */}
-          <button
-            onClick={(e) => { e.stopPropagation(); onLabToggle?.(ingredient); }}
-            className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 transition-all active:scale-90"
-            style={inLab
-              ? { background: '#4B9EFF', color: 'white', boxShadow: '0 2px 8px rgba(75,158,255,0.4)' }
-              : { background: '#F3F4F6', color: '#9CA3AF' }}>
-            <span className="text-sm font-bold leading-none">{inLab ? '✓' : '+'}</span>
-          </button>
+          )}
         </div>
       </div>
-    </div>
-  );
-}
 
-function InfoRow({ label, value }) {
-  return (
-    <div>
-      <SectionLabel>{label}</SectionLabel>
-      <p className="text-sm text-gray-700 leading-relaxed mt-1">{value}</p>
+      <div className="px-3 pb-3 flex justify-end">
+        <button
+          onClick={(e) => { e.stopPropagation(); onLabToggle?.(ingredient); }}
+          style={inLab
+            ? { width: 26, height: 26, borderRadius: 8, background: '#1B6E63', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, flexShrink: 0 }
+            : { width: 26, height: 26, borderRadius: 8, background: '#F2F2F2', color: '#999999', border: '1px solid #DCE3DE', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, flexShrink: 0 }}>
+          {inLab ? '✓' : '+'}
+        </button>
+      </div>
     </div>
-  );
-}
-
-function SectionLabel({ children }) {
-  return (
-    <p className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">{children}</p>
   );
 }

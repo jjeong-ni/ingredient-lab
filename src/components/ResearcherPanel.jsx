@@ -1,0 +1,241 @@
+import { useState, useMemo } from 'react';
+import { RESEARCHERS, RESEARCHER_MAP, analyzeFormula } from '../data/researchers';
+import { progressForXp, DEEP_TIPS } from '../data/affinity';
+
+const TYPE_STYLE = {
+  warn:   { border: '#FECACA', bg: '#FEF2F2', chip: '⚠️ 주의' },
+  praise: { border: '#BBF7D0', bg: '#F0FDF4', chip: '⭐ 굿' },
+  tip:    { border: '#C8E3DA', bg: '#E6F1EC', chip: '💡 제안' },
+  info:   { border: '#DCE3DE', bg: '#EFF3F1', chip: 'ℹ️ 정보' },
+};
+
+function Avatar({ researcher, size = 36 }) {
+  return (
+    <div className="rounded-full flex items-center justify-center flex-shrink-0 text-white"
+      style={{
+        width: size, height: size, fontSize: size * 0.42, fontWeight: 800,
+        background: `linear-gradient(150deg, ${researcher.color}, ${researcher.color}CC)`,
+        boxShadow: `0 2px 6px ${researcher.color}55`,
+        letterSpacing: '-0.02em',
+      }}>
+      {researcher.name.charAt(0)}
+    </div>
+  );
+}
+
+function Bubble({ msg }) {
+  const r = RESEARCHER_MAP[msg.rid];
+  const st = TYPE_STYLE[msg.type];
+  return (
+    <div className="flex items-start gap-2.5">
+      <Avatar researcher={r} size={34} />
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-1.5 mb-1">
+          <span style={{ fontSize: 11, fontWeight: 800, color: r.color }}>{r.name}</span>
+          <span style={{ fontSize: 10, color: '#5F6B65', fontWeight: 600 }}>{r.title}</span>
+          <span className="px-1.5 py-0.5 rounded-full"
+            style={{ fontSize: 9, fontWeight: 700, background: st.bg, border: `1px solid ${st.border}`, color: '#445048' }}>
+            {st.chip}
+          </span>
+        </div>
+        <div className="rounded-xl rounded-tl-sm px-3 py-2.5"
+          style={{ background: st.bg, border: `1px solid ${st.border}` }}>
+          <p className="leading-relaxed" style={{ fontSize: 12, color: '#16201C' }}>{msg.text}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** 연구팀 코멘트 전체 다이얼로그 */
+function TeamDialog({ messages, onClose }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center px-4"
+      style={{ background: 'rgba(0,0,0,0.5)' }} onClick={onClose}>
+      <div className="relative rounded-2xl w-full max-w-[400px] max-h-[80vh] flex flex-col overflow-hidden"
+        style={{ background: '#FFFFFF', boxShadow: '0 24px 80px rgba(0,0,0,0.18)' }}
+        onClick={(e) => e.stopPropagation()}>
+        <div className="flex-shrink-0 px-5 pt-5 pb-3 flex items-center justify-between"
+          style={{ borderBottom: '1px solid #F0F0F0' }}>
+          <div>
+            <p style={{ fontSize: 15, fontWeight: 800, color: '#16201C' }}>🧑‍🔬 연구팀 분석</p>
+            <p style={{ fontSize: 11, color: '#5F6B65' }}>배합이 바뀔 때마다 실시간으로 분석해요</p>
+          </div>
+          <button onClick={onClose}
+            className="w-8 h-8 rounded-full flex items-center justify-center"
+            style={{ background: '#E6EEE9', color: '#666666' }}>✕</button>
+        </div>
+        <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
+          {messages.map((m, i) => <Bubble key={i} msg={m} />)}
+          {messages.length === 0 && (
+            <p className="text-center py-8" style={{ fontSize: 12, color: '#5F6B65' }}>아직 분석할 내용이 없어요</p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** 연구팀 소개 카드 행 (Step1용) */
+export function ResearcherIntro({ affinity }) {
+  const [selected, setSelected] = useState(null);
+  const xpOf = (rid) => (affinity && affinity[rid]) || 0;
+
+  return (
+    <div className="mb-5">
+      <p className="text-[10px] font-bold uppercase tracking-widest mb-2.5" style={{ color: '#5F6B65' }}>함께하는 연구팀</p>
+      <div className="flex gap-2 overflow-x-auto pb-2" style={{ scrollbarWidth: 'none' }}>
+        {RESEARCHERS.map((r) => {
+          const { level } = progressForXp(xpOf(r.id));
+          return (
+            <button key={r.id} onClick={() => setSelected(r)}
+              className="flex-shrink-0 flex flex-col items-center gap-1.5 px-3.5 py-3 rounded-xl transition-all active:scale-95"
+              style={{ background: '#FFFFFF', border: '1px solid #DCE3DE', boxShadow: '0 1px 3px rgba(0,0,0,0.07)', minWidth: 86 }}>
+              <div className="relative">
+                <Avatar researcher={r} size={40} />
+                <span className="absolute -bottom-1 -right-1 rounded-full flex items-center justify-center text-white"
+                  style={{ width: 16, height: 16, fontSize: 8, fontWeight: 800, background: r.color, border: '2px solid white' }}>
+                  {level}
+                </span>
+              </div>
+              <div className="text-center">
+                <p style={{ fontSize: 11, fontWeight: 800, color: '#16201C' }}>{r.name}</p>
+                <p style={{ fontSize: 9, fontWeight: 600, color: r.color }}>{r.title}</p>
+              </div>
+            </button>
+          );
+        })}
+      </div>
+
+      {selected && (
+        <ResearcherProfile researcher={selected} xp={xpOf(selected.id)} onClose={() => setSelected(null)} />
+      )}
+    </div>
+  );
+}
+
+function ResearcherProfile({ researcher, xp, onClose }) {
+  const { level, next, progress, title } = progressForXp(xp);
+  const tips = DEEP_TIPS[researcher.id] || [];
+  const unlockedTips = tips.slice(0, level - 1);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center px-4"
+      style={{ background: 'rgba(0,0,0,0.5)' }} onClick={onClose}>
+      <div className="relative rounded-2xl w-full max-w-[340px] max-h-[85vh] flex flex-col overflow-hidden"
+        style={{ background: '#FFFFFF', boxShadow: '0 24px 80px rgba(0,0,0,0.18)' }}
+        onClick={(e) => e.stopPropagation()}>
+        <div className="flex flex-col items-center pt-7 pb-3 px-6 flex-shrink-0">
+          <Avatar researcher={researcher} size={64} />
+          <p className="mt-3" style={{ fontSize: 17, fontWeight: 800, color: '#16201C' }}>{researcher.name}</p>
+          <p style={{ fontSize: 12, fontWeight: 700, color: researcher.color }}>{researcher.title}</p>
+          <span className="mt-2 px-3 py-1 rounded-full"
+            style={{ fontSize: 10, fontWeight: 700, background: '#E6EEE9', color: '#445048' }}>
+            🎖 {researcher.ability}
+          </span>
+          <p className="mt-3 text-center leading-relaxed" style={{ fontSize: 12, color: '#445048' }}>{researcher.desc}</p>
+
+          <div className="w-full mt-4">
+            <div className="flex items-center justify-between mb-1">
+              <span style={{ fontSize: 11, fontWeight: 800, color: researcher.color }}>Lv.{level} · {title}</span>
+              <span style={{ fontSize: 10, color: '#93A29A' }}>{next ? `${xp} / ${next} XP` : `MAX · ${xp} XP`}</span>
+            </div>
+            <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: '#E6EEE9' }}>
+              <div className="h-full rounded-full transition-all" style={{ width: `${Math.round(progress * 100)}%`, background: researcher.color }} />
+            </div>
+            <p className="mt-1" style={{ fontSize: 9, color: '#93A29A' }}>실험을 저장할 때마다 함께한 연구원의 경험치가 올라가요</p>
+          </div>
+        </div>
+
+        {unlockedTips.length > 0 && (
+          <div className="flex-1 overflow-y-auto px-5 pb-2 space-y-2" style={{ borderTop: '1px dashed #DCE3DE', paddingTop: 12 }}>
+            <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: '#5F6B65' }}>🔓 해금된 심화 팁</p>
+            {unlockedTips.map((tip, i) => (
+              <div key={i} className="rounded-lg p-2.5" style={{ background: '#EFF3F1', border: '1px solid #F0F0F0' }}>
+                <p style={{ fontSize: 11, color: '#16201C', lineHeight: 1.5 }}>{tip}</p>
+              </div>
+            ))}
+          </div>
+        )}
+        {unlockedTips.length === 0 && tips.length > 0 && (
+          <div className="px-5 pb-2" style={{ borderTop: '1px dashed #DCE3DE', paddingTop: 12 }}>
+            <p className="text-center" style={{ fontSize: 11, color: '#93A29A' }}>레벨2부터 심화 팁이 열려요. 실험을 더 저장해보세요!</p>
+          </div>
+        )}
+
+        <div className="px-5 pb-5 pt-3 flex-shrink-0">
+          <button onClick={onClose}
+            className="w-full py-3 rounded-xl font-bold text-sm"
+            style={{ background: '#E6EEE9', color: '#445048' }}>닫기</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * 연구팀 패널
+ * variant="floating": 플로팅 말풍선 버튼 (BuildStep) — 탭하면 전체 코멘트 다이얼로그
+ * variant="inline": 카드형 코멘트 리스트 (FormulaStep)
+ */
+export default function ResearcherPanel({ formula, l3, goals, variant = 'inline' }) {
+  const [open, setOpen] = useState(false);
+  const messages = useMemo(() => analyzeFormula(formula, l3, goals), [formula, l3, goals]);
+  if (messages.length === 0) return null;
+
+  const top = messages[0];
+  const topR = RESEARCHER_MAP[top.rid];
+  const warnCount = messages.filter((m) => m.type === 'warn').length;
+
+  if (variant === 'floating') {
+    return (
+      <>
+        <button onClick={() => setOpen(true)}
+          className="fixed left-4 z-20 flex items-center gap-2 pl-1.5 pr-3 py-1.5 rounded-full transition-all active:scale-95"
+          style={{
+            bottom: formula.length > 0 ? '8.7rem' : '4.8rem',
+            maxWidth: 'calc(100% - 32px)',
+            background: '#FFFFFF',
+            border: '1px solid #DCE3DE',
+            boxShadow: '0 6px 24px rgba(0,0,0,0.14)',
+          }}>
+          <div className="relative flex-shrink-0">
+            <Avatar researcher={topR} size={30} />
+            {warnCount > 0 && (
+              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center text-white"
+                style={{ background: '#DC2626', fontSize: 9, fontWeight: 800 }}>{warnCount}</span>
+            )}
+          </div>
+          <span className="truncate" style={{ fontSize: 11, fontWeight: 600, color: '#16201C', maxWidth: 220 }}>
+            {top.text}
+          </span>
+        </button>
+        {open && <TeamDialog messages={messages} onClose={() => setOpen(false)} />}
+      </>
+    );
+  }
+
+  // inline
+  const shown = open ? messages : messages.slice(0, 3);
+  return (
+    <div className="rounded-lg p-4 mb-4"
+      style={{ background: '#FFFFFF', border: '1px solid #DCE3DE', boxShadow: '0 1px 3px rgba(0,0,0,0.07)' }}>
+      <div className="flex items-center justify-between mb-3">
+        <p className="font-semibold text-sm" style={{ color: '#16201C' }}>🧑‍🔬 연구팀 분석</p>
+        <div className="flex -space-x-1.5">
+          {RESEARCHERS.map((r) => <Avatar key={r.id} researcher={r} size={22} />)}
+        </div>
+      </div>
+      <div className="space-y-3">
+        {shown.map((m, i) => <Bubble key={i} msg={m} />)}
+      </div>
+      {messages.length > 3 && (
+        <button onClick={() => setOpen(!open)}
+          className="w-full mt-3 py-2 rounded-lg text-xs font-bold"
+          style={{ background: '#E6EEE9', color: '#445048' }}>
+          {open ? '접기 ▲' : `코멘트 ${messages.length - 3}개 더보기 ▼`}
+        </button>
+      )}
+    </div>
+  );
+}
