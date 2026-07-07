@@ -9,7 +9,7 @@ function VersionChips({ lineage, value, onChange, otherValue }) {
         const disabled = f.id === otherValue.id;
         return (
           <button key={f.id} disabled={disabled} onClick={() => onChange(f)}
-            className="flex-shrink-0 px-2.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all active:scale-95 disabled:opacity-30"
+            className="flex-shrink-0 px-3.5 py-2 rounded-lg text-sm font-bold whitespace-nowrap transition-all active:scale-95 disabled:opacity-30"
             style={active
               ? { background: '#16201C', color: 'white' }
               : { background: '#FFFFFF', color: '#445048', border: '1px solid #DCE3DE' }}>

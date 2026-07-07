@@ -102,7 +102,7 @@ function OriginFilterChips({ value, onChange }) {
         const activeBg = val === 'animal' ? '#EA580C' : val === 'vegan' ? '#16a34a' : '#16201C';
         return (
           <button key={val} onClick={() => onChange(val)}
-            className="px-2.5 py-1 rounded text-xs font-semibold transition-all active:scale-95"
+            className="px-3.5 py-2 rounded-lg text-sm font-semibold transition-all active:scale-95"
             style={active
               ? { background: activeBg, color: 'white' }
               : { background: '#FFFFFF', color: '#445048', border: '1px solid #DCE3DE' }}>
@@ -159,7 +159,7 @@ function DictHome({ onSelectCategory, onAllClick, onFavoritesClick, onAnalyzeCli
               <path d="M12 20s-7-4.5-9.5-9C.8 7.3 3 4 6.3 4 8.6 4 10.7 5.4 12 7c1.3-1.6 3.4-3 5.7-3 3.3 0 5.5 3.3 3.8 7-2.5 4.5-9.5 9-9.5 9z"/>
             </svg>
           </div>
-          <span className="text-xs font-bold" style={{ color: '#16201C' }}>즐겨찾기</span>
+          <span className="text-sm font-bold" style={{ color: "#16201C" }}>즐겨찾기</span>
         </button>
         <button onClick={onAnalyzeClick}
           className="flex flex-col items-start gap-2 p-3.5 rounded-2xl transition-all active:scale-[0.96]"
@@ -169,7 +169,7 @@ function DictHome({ onSelectCategory, onAllClick, onFavoritesClick, onAnalyzeCli
               <path d="M9 3h6M10 3v6l-4 8a2 2 0 0 0 1.8 2.9h8.4A2 2 0 0 0 18 17l-4-8V3"/>
             </svg>
           </div>
-          <span className="text-xs font-bold" style={{ color: '#16201C' }}>성분표분석</span>
+          <span className="text-sm font-bold" style={{ color: "#16201C" }}>성분표분석</span>
         </button>
       </div>
 
@@ -177,10 +177,10 @@ function DictHome({ onSelectCategory, onAllClick, onFavoritesClick, onAnalyzeCli
       <div className="flex gap-2 overflow-x-auto pb-2.5 mb-3" style={{ scrollbarWidth: 'none' }}>
         {SKIN_CONCERNS.map((c) => (
           <button key={c.query} onClick={() => onSkinConcernClick(c.query)}
-            className="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-lg transition-all active:scale-95"
+            className="flex-shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all active:scale-95"
             style={SURFACE}>
-            <span className="text-sm leading-none">{c.icon}</span>
-            <span className="text-xs font-semibold whitespace-nowrap" style={{ color: '#445048' }}>{c.label}</span>
+            <span className="text-base leading-none">{c.icon}</span>
+            <span className="text-sm font-semibold whitespace-nowrap" style={{ color: '#445048' }}>{c.label}</span>
           </button>
         ))}
       </div>
@@ -376,7 +376,7 @@ function DictFavoritesView({ onBack, onIngredientClick, labIds, onLabToggle, fav
           </div>
           {list.length > 0 && (
             <button onClick={handleExport}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all active:scale-95"
+              className="flex items-center gap-1.5 px-4 py-2.5 rounded-md text-sm font-semibold transition-all active:scale-95"
               style={copied
                 ? { background: '#F0FDF4', color: '#15803D', border: '1px solid #BBF7D0' }
                 : { background: '#FFFFFF', color: '#445048', border: '1px solid #DCE3DE' }}>

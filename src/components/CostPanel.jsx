@@ -39,7 +39,7 @@ export default function CostPanel({ formula }) {
 
       {breakdown.length > 3 && (
         <button onClick={() => setExpanded(!expanded)}
-          className="w-full mt-2.5 py-1.5 rounded-md text-xs font-bold"
+          className="w-full mt-2.5 py-2.5 rounded-md text-sm font-bold"
           style={{ background: '#E6EEE9', color: '#445048' }}>
           {expanded ? '접기 ▲' : `전체 ${breakdown.length}개 성분 보기 ▼`}
         </button>

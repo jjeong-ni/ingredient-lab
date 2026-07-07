@@ -248,7 +248,7 @@ function BuildStep({ l1, l2, l3, formula, onAdd, onRemove, onNext, onBack, onIng
 
         <div className="flex gap-1.5 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
           <button onClick={() => setCatFilter('all')}
-            className="flex-shrink-0 px-3 py-1.5 rounded text-xs font-semibold whitespace-nowrap"
+            className="flex-shrink-0 px-4 py-2.5 rounded-lg text-sm font-semibold whitespace-nowrap"
             style={catFilter === 'all'
               ? { background: '#16201C', color: 'white' }
               : { background: '#FFFFFF', color: '#445048', border: '1px solid #DCE3DE' }}>
@@ -256,7 +256,7 @@ function BuildStep({ l1, l2, l3, formula, onAdd, onRemove, onNext, onBack, onIng
           </button>
           {Object.entries(CATEGORIES).map(([key, cat]) => (
             <button key={key} onClick={() => setCatFilter(catFilter === key ? 'all' : key)}
-              className="flex-shrink-0 flex items-center gap-1 px-3 py-1.5 rounded text-xs font-semibold whitespace-nowrap"
+              className="flex-shrink-0 flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-semibold whitespace-nowrap"
               style={catFilter === key
                 ? { background: cat.color, color: 'white' }
                 : { background: '#FFFFFF', color: cat.color, border: `1px solid ${cat.color}40` }}>
@@ -278,7 +278,7 @@ function BuildStep({ l1, l2, l3, formula, onAdd, onRemove, onNext, onBack, onIng
               return (
                 <button key={ing.id}
                   onClick={() => inFormula ? onRemove(ing.id) : onAdd(ing)}
-                  className="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-md text-xs font-semibold transition-all active:scale-95"
+                  className="flex-shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all active:scale-95"
                   style={inFormula
                     ? { background: '#1B6E63', color: 'white' }
                     : { background: '#FFFFFF', color: '#16201C', border: '1px solid #DCE3DE' }}>
@@ -482,7 +482,7 @@ function FormulaStep({ l1, l2, l3, formula, onBack, onPctChange, onRemove, onSav
         <button onClick={onBack} className="flex items-center gap-1.5 text-sm font-semibold" style={{ color: '#5F6B65' }}>← 성분 선택</button>
         <div className="flex items-center gap-2">
           <button onClick={() => setGuideOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all active:scale-95"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-semibold transition-all active:scale-95"
             style={guideOpen
               ? { background: '#1B6E63', color: 'white' }
               : { background: '#FFFFFF', color: '#445048', border: '1px solid #DCE3DE' }}>
@@ -538,7 +538,7 @@ function FormulaStep({ l1, l2, l3, formula, onBack, onPctChange, onRemove, onSav
         <div className="flex gap-1.5">
           {UNIT_OPTIONS.map((opt) => (
             <button key={opt.value} onClick={() => setUnit(opt.value)}
-              className="flex-1 py-2 rounded-md text-xs font-semibold transition-all active:scale-95"
+              className="flex-1 py-3 rounded-lg text-sm font-semibold transition-all active:scale-95"
               style={unit === opt.value
                 ? { background: '#16201C', color: 'white' }
                 : { background: '#FFFFFF', color: '#445048', border: '1px solid #DCE3DE' }}>

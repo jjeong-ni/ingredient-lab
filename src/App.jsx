@@ -144,13 +144,13 @@ export default function App() {
               const active = tab === n.id;
               return (
                 <button key={n.id} onClick={() => setTab(n.id)}
-                  className="flex-1 flex flex-col items-center justify-center py-3 gap-0.5 relative">
+                  className="flex-1 flex flex-col items-center justify-center py-3.5 gap-1 relative">
                   {active && (
                     <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full"
                       style={{ background: '#1B6E63' }} />
                   )}
                   {n.icon(active)}
-                  <span style={{ fontSize: 10, fontWeight: 700, color: active ? '#1B6E63' : '#93A29A' }}>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: active ? '#1B6E63' : '#93A29A' }}>
                     {n.label}
                   </span>
                   {n.id === 'lab' && labIngredientIds.size > 0 && (

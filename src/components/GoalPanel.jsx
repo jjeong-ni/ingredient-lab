@@ -15,7 +15,7 @@ export function GoalPicker({ goals, onChange }) {
           const active = goals.includes(g.id);
           return (
             <button key={g.id} onClick={() => toggle(g.id)}
-              className="flex-shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all active:scale-95"
+              className="flex-shrink-0 flex items-center gap-1.5 px-4 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap transition-all active:scale-95"
               style={active
                 ? { background: '#16201C', color: 'white' }
                 : { background: '#FFFFFF', color: '#445048', border: '1px solid #DCE3DE' }}>
