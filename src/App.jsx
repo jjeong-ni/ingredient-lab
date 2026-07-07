@@ -102,7 +102,7 @@ export default function App() {
   }, []);
 
   return (
-    <div className="min-h-screen" style={{ fontFamily: "'Nunito Variable', 'Nunito', -apple-system, system-ui, sans-serif", background: '#EFF3F1' }}>
+    <div className="min-h-screen" style={{ fontFamily: "'Pretendard Variable', 'Pretendard', -apple-system, 'Apple SD Gothic Neo', system-ui, sans-serif", background: '#EFF3F1' }}>
       <div className="max-w-[480px] mx-auto min-h-screen flex flex-col">
         <header className="flex-shrink-0 px-5 pt-4 pb-3 flex items-center justify-between"
           style={{ background: '#FFFFFF', borderBottom: '1px solid #DCE3DE' }}>

@@ -123,15 +123,15 @@ function applyOriginFilter(list, originFilter) {
 function DictHome({ onSelectCategory, onAllClick, onFavoritesClick, onAnalyzeClick, onSkinConcernClick }) {
   return (
     <div className="px-4 pt-3 pb-4">
-      <div className="hero-glass rounded-2xl p-5 mb-4 flex items-end justify-between">
-        <div>
-          <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', opacity: 0.75 }}>INGREDIENT ARCHIVE</p>
+      <div className="hero-glass rounded-2xl p-5 mb-4 flex items-end justify-between gap-3">
+        <div className="min-w-0">
+          <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', opacity: 0.7 }}>INGREDIENT ARCHIVE</p>
           <p className="font-bold text-white text-lg mt-1 leading-tight">성분 사전</p>
           <p className="text-xs mt-1" style={{ color: 'rgba(255,255,255,0.8)' }}>화장품 원료 정보를 한눈에</p>
         </div>
         <div className="text-right flex-shrink-0">
-          <p className="font-bold text-white" style={{ fontSize: 22, fontFamily: 'ui-monospace, monospace', lineHeight: 1 }}>{ingredients.length}</p>
-          <p style={{ fontSize: 9, color: 'rgba(255,255,255,0.7)', letterSpacing: '0.05em' }}>종 수록</p>
+          <p className="font-bold text-white" style={{ fontSize: 19, fontFamily: 'ui-monospace, monospace', lineHeight: 1 }}>{ingredients.length}</p>
+          <p style={{ fontSize: 9, color: 'rgba(255,255,255,0.65)', letterSpacing: '0.03em', marginTop: 3 }}>종 수록</p>
         </div>
       </div>
 

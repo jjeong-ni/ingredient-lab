@@ -3,7 +3,7 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: 'Nunito Variable', 'Nunito', -apple-system, system-ui, sans-serif;
+  font-family: 'Pretendard Variable', 'Pretendard', -apple-system, 'Apple SD Gothic Neo', system-ui, sans-serif;
   background: #EFF3F1;
   color: #16201C;
   -webkit-font-smoothing: antialiased;
@@ -28,23 +28,23 @@ body {
 .hero-glass::before {
   content: "";
   position: absolute;
-  top: -45%;
-  right: -12%;
-  width: 62%;
-  padding-bottom: 62%;
+  top: -60%;
+  right: -18%;
+  width: 46%;
+  padding-bottom: 46%;
   border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.32), rgba(255,255,255,0) 65%);
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.28), rgba(255,255,255,0) 65%);
   pointer-events: none;
 }
 .hero-glass::after {
   content: "";
   position: absolute;
-  left: -18%;
-  bottom: -50%;
-  width: 58%;
-  padding-bottom: 58%;
+  left: -20%;
+  bottom: -60%;
+  width: 50%;
+  padding-bottom: 50%;
   border-radius: 40%;
-  background: rgba(255,255,255,0.07);
+  background: rgba(255,255,255,0.06);
   transform: rotate(18deg);
   pointer-events: none;
 }
