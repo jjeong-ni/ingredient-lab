@@ -80,6 +80,14 @@ export default function App() {
     });
   }, []);
 
+  const handleUpdateFormula = useCallback((id, patch) => {
+    setSavedFormulas(prev => {
+      const next = prev.map(f => f.id === id ? { ...f, ...patch } : f);
+      localStorage.setItem('savedFormulas', JSON.stringify(next));
+      return next;
+    });
+  }, []);
+
   return (
     <div className="min-h-screen" style={{ fontFamily: "'Nunito Variable', 'Nunito', -apple-system, system-ui, sans-serif", background: '#FAFAFA' }}>
       <div className="max-w-[480px] mx-auto min-h-screen flex flex-col">
@@ -107,6 +115,7 @@ export default function App() {
             <LabTab
               savedFormulas={savedFormulas}
               onSaveFormula={handleSaveFormula}
+              onUpdateFormula={handleUpdateFormula}
               onDeleteFormula={handleDeleteFormula}
               labDictIds={labIngredientIds}
             />

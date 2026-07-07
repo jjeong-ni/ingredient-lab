@@ -2,6 +2,8 @@ import { useState, useMemo } from 'react';
 import { ingredients, CATEGORIES, synergies } from '../data/ingredients';
 import { PRODUCT_TREE, suggestPct, parseConc } from '../data/productTypes';
 import IngredientCard from './IngredientCard';
+import ResearcherPanel, { ResearcherIntro } from './ResearcherPanel';
+import LabNotebook from './LabNotebook';
 
 const SURFACE = {
   background: '#FFFFFF',
@@ -65,33 +67,20 @@ function findSynergies(ids) {
   return synergies.filter((s) => s.ids.every((id) => ids.includes(id)));
 }
 
-function Step1({ onSelect, savedFormulas, onDeleteFormula, labDictIds }) {
-  const [copiedId, setCopiedId] = useState(null);
+function Step1({ onSelect, savedFormulas, labDictIds, onOpenNotebook }) {
   const dictCount = labDictIds?.size || 0;
-
-  async function handleCopyFormula(f) {
-    const total = f.items.reduce((s, i) => s + i.pct, 0);
-    const text = [
-      `${f.icon} ${f.name} (${f.l1Label} · ${f.l2Label})`,
-      `저장일: ${f.createdAt}`,
-      '─'.repeat(24),
-      ...f.items.map((item) => `${item.emoji} ${item.name}: ${item.pct.toFixed(2)}%`),
-      '─'.repeat(24),
-      `총 함량: ${total.toFixed(2)}%`,
-    ].join('\n');
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopiedId(f.id);
-      setTimeout(() => setCopiedId(null), 2000);
-    } catch(e) {}
-  }
+  const expCount = savedFormulas?.length || 0;
+  const latest = expCount > 0 ? savedFormulas[savedFormulas.length - 1] : null;
+  const pendingNotes = (savedFormulas || []).filter(
+    (f) => !(f.note && (f.note.result || f.note.improve || f.note.rating))
+  ).length;
 
   return (
     <div className="px-4 pt-3 pb-6">
       <div className="rounded-lg p-4 mb-5"
         style={{ background: '#171717' }}>
         <p className="font-bold text-white text-base">⚗️ 성분 실험실</p>
-        <p className="text-xs mt-1" style={{ color: 'rgba(255,255,255,0.55)' }}>만들 제품 유형을 선택하면<br/>성분별 권장 함량을 안내해드려요</p>
+        <p className="text-xs mt-1" style={{ color: 'rgba(255,255,255,0.55)' }}>만들 제품 유형을 선택하면<br/>연구팀이 실시간으로 실험을 도와드려요</p>
       </div>
 
       {dictCount > 0 && (
@@ -102,42 +91,31 @@ function Step1({ onSelect, savedFormulas, onDeleteFormula, labDictIds }) {
         </div>
       )}
 
-      {savedFormulas && savedFormulas.length > 0 && (
-        <div className="mb-5">
-          <p className="text-[10px] font-bold uppercase tracking-widest mb-2.5" style={{ color: '#888888' }}>저장된 배합</p>
-          <div className="space-y-2">
-            {savedFormulas.map((f) => (
-              <div key={f.id} className="rounded-lg p-3.5 flex items-start gap-3" style={SURFACE}>
-                <span className="text-2xl flex-shrink-0">{f.icon}</span>
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-sm" style={{ color: '#171717' }}>{f.name}</p>
-                  <p className="text-[10px] mb-1.5" style={{ color: '#888888' }}>{f.l1Label} · {f.l2Label} · {f.createdAt}</p>
-                  <div className="flex flex-wrap gap-1">
-                    {f.items.map((item, i) => (
-                      <span key={i} className="text-[10px] px-1.5 py-0.5 rounded font-medium"
-                        style={{ background: '#F4F4F5', color: '#444444' }}>
-                        {item.emoji} {item.name} {item.pct.toFixed(1)}%
-                      </span>
-                    ))}
-                  </div>
-                </div>
-                <div className="flex flex-col gap-1.5 flex-shrink-0">
-                  <button onClick={() => handleCopyFormula(f)}
-                    className="w-7 h-7 rounded-md flex items-center justify-center text-xs transition-all"
-                    style={copiedId === f.id
-                      ? { background: '#F0FDF4', color: '#15803D', border: '1px solid #BBF7D0' }
-                      : { background: '#F4F4F5', color: '#444444', border: '1px solid #E5E5E5' }}>
-                    {copiedId === f.id ? '✓' : '📋'}
-                  </button>
-                  <button onClick={() => onDeleteFormula(f.id)}
-                    className="w-7 h-7 rounded-md flex items-center justify-center"
-                    style={{ background: '#FEF2F2', color: '#DC2626', border: '1px solid #FECACA' }}>×</button>
-                </div>
-              </div>
-            ))}
+      <button onClick={onOpenNotebook}
+        className="w-full flex items-center gap-3 p-4 rounded-xl mb-5 transition-all active:scale-[0.98]"
+        style={SURFACE}>
+        <div className="w-11 h-11 rounded-xl flex items-center justify-center text-2xl flex-shrink-0"
+          style={{ background: '#F4F4F5' }}>📓</div>
+        <div className="flex-1 min-w-0 text-left">
+          <div className="flex items-center gap-1.5">
+            <p className="font-bold text-sm" style={{ color: '#171717' }}>실험노트</p>
+            {pendingNotes > 0 && (
+              <span className="px-1.5 py-0.5 rounded-full"
+                style={{ fontSize: 9, fontWeight: 700, background: '#FFFBEB', color: '#B45309', border: '1px solid #FDE68A' }}>
+                미작성 {pendingNotes}
+              </span>
+            )}
           </div>
+          <p className="text-[10px] mt-0.5 truncate" style={{ color: '#888888' }}>
+            {expCount > 0
+              ? `실험 ${expCount}건 · 최근: ${latest.icon} ${latest.name}`
+              : '실험 기록을 남기고 재실험까지 이어가요'}
+          </p>
         </div>
-      )}
+        <span style={{ fontSize: 13, color: '#BBBBBB' }}>→</span>
+      </button>
+
+      <ResearcherIntro />
 
       <p className="text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: '#888888' }}>카테고리 선택</p>
       <div className="grid grid-cols-3 gap-3">
@@ -316,6 +294,8 @@ function BuildStep({ l1, l2, l3, formula, onAdd, onRemove, onNext, onBack, onIng
         ))}
       </div>
 
+      <ResearcherPanel formula={formula} l3={l3} variant="floating" />
+
       {formula.length > 0 && (
         <div className="fixed bottom-16 left-1/2 -translate-x-1/2 w-full max-w-[480px] px-4 z-20">
           <button onClick={onNext}
@@ -427,7 +407,7 @@ const UNIT_OPTIONS = [
   { label: '1%', value: 1 },
 ];
 
-function FormulaStep({ l1, l2, l3, formula, onBack, onPctChange, onRemove, onSaveFormula }) {
+function FormulaStep({ l1, l2, l3, formula, onBack, onPctChange, onRemove, onSaveFormula, parentExp }) {
   const [guideOpen, setGuideOpen] = useState(false);
   const [unit, setUnit] = useState(0.5);
   const [copied, setCopied] = useState(false);
@@ -469,10 +449,14 @@ function FormulaStep({ l1, l2, l3, formula, onBack, onPctChange, onRemove, onSav
       id: Date.now(),
       name: l3.label,
       icon: l3.icon,
+      l1Id: l1.id, l2Id: l2.id, l3Id: l3.id,
       l1Label: l1.label,
       l2Label: l2.label,
       createdAt: new Date().toLocaleDateString('ko'),
-      items: formula.map((f) => ({ name: f.ingredient.name, emoji: f.ingredient.emoji, pct: f.pct })),
+      items: formula.map((f) => ({ ingId: f.ingredient.id, name: f.ingredient.name, emoji: f.ingredient.emoji, pct: f.pct })),
+      note: { result: '', improve: '', rating: 0 },
+      version: parentExp ? (parentExp.version || 1) + 1 : 1,
+      parentId: parentExp?.id || null,
     };
     onSaveFormula(data);
     setSaved(true);
@@ -501,6 +485,16 @@ function FormulaStep({ l1, l2, l3, formula, onBack, onPctChange, onRemove, onSav
         </div>
       </div>
 
+      {parentExp && (
+        <div className="rounded-lg p-3 mb-4 flex items-center gap-2.5"
+          style={{ background: '#F5F3FF', border: '1px solid #DDD6FE' }}>
+          <span className="text-lg">🔄</span>
+          <p className="text-xs font-semibold" style={{ color: '#6D28D9' }}>
+            "{parentExp.name}" {parentExp.version || 1}차 실험의 재실험이에요. 저장하면 {(parentExp.version || 1) + 1}차로 기록돼요.
+          </p>
+        </div>
+      )}
+
       {guideOpen && <FormulaGuideDrawer l3={l3} onClose={() => setGuideOpen(false)} />}
 
       <div className="rounded-lg p-4 mb-4" style={SURFACE}>
@@ -519,6 +513,8 @@ function FormulaStep({ l1, l2, l3, formula, onBack, onPctChange, onRemove, onSav
           <span className="text-[10px]" style={{ color: '#888888' }}>100%</span>
         </div>
       </div>
+
+      <ResearcherPanel formula={formula} l3={l3} variant="inline" />
 
       <div className="mb-4">
         <p className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{ color: '#888888' }}>조절 단위</p>
@@ -663,13 +659,30 @@ function IngredientModal({ ingredient, onClose, inLab, onToggle }) {
   );
 }
 
-export default function LabTab({ savedFormulas, onSaveFormula, onDeleteFormula, labDictIds }) {
+function findLeaf(f) {
+  const l1 = PRODUCT_TREE.find((x) => x.id === f.l1Id);
+  const l2 = l1?.children.find((x) => x.id === f.l2Id);
+  const l3 = l2?.children.find((x) => x.id === f.l3Id);
+  return l3 ? { l1, l2, l3 } : null;
+}
+
+function restoreItems(f) {
+  return f.items
+    .map((it) => {
+      const ing = ingredients.find((i) => i.id === it.ingId) || ingredients.find((i) => i.name === it.name);
+      return ing ? { ingredient: ing, pct: it.pct } : null;
+    })
+    .filter(Boolean);
+}
+
+export default function LabTab({ savedFormulas, onSaveFormula, onUpdateFormula, onDeleteFormula, labDictIds }) {
   const [step, setStep] = useState(1);
   const [l1, setL1] = useState(null);
   const [l2, setL2] = useState(null);
   const [l3, setL3] = useState(null);
   const [formula, setFormula] = useState([]);
   const [modal, setModal] = useState(null);
+  const [parentExp, setParentExp] = useState(null);
 
   const selectedIds = new Set(formula.map((f) => f.ingredient.id));
 
@@ -683,12 +696,36 @@ export default function LabTab({ savedFormulas, onSaveFormula, onDeleteFormula, 
 
   function selectL1(item) { setL1(item); setStep(2); }
   function selectL2(item) { setL2(item); setStep(3); }
-  function selectL3(item) { setL3(item); setFormula([]); setStep(4); }
-  function reset() { setStep(1); setL1(null); setL2(null); setL3(null); setFormula([]); }
+  function selectL3(item) { setL3(item); setFormula([]); setParentExp(null); setStep(4); }
+  function reset() { setStep(1); setL1(null); setL2(null); setL3(null); setFormula([]); setParentExp(null); }
+
+  function canReExperiment(f) {
+    return !!findLeaf(f) && restoreItems(f).length > 0;
+  }
+
+  function reExperiment(f) {
+    const found = findLeaf(f);
+    if (!found) return;
+    setL1(found.l1); setL2(found.l2); setL3(found.l3);
+    setFormula(restoreItems(f));
+    setParentExp(f);
+    setStep(5);
+  }
 
   return (
     <div>
-      {step === 1 && <Step1 onSelect={selectL1} savedFormulas={savedFormulas} onDeleteFormula={onDeleteFormula} labDictIds={labDictIds} />}
+      {step === 1 && (
+        <Step1 onSelect={selectL1} savedFormulas={savedFormulas}
+          labDictIds={labDictIds} onOpenNotebook={() => setStep('notebook')} />
+      )}
+      {step === 'notebook' && (
+        <LabNotebook savedFormulas={savedFormulas}
+          onUpdateFormula={onUpdateFormula}
+          onDeleteFormula={onDeleteFormula}
+          onReExperiment={reExperiment}
+          canReExperiment={canReExperiment}
+          onBack={reset} />
+      )}
       {step === 2 && <Step2 l1={l1} onSelect={selectL2} onBack={reset} />}
       {step === 3 && <Step3 l1={l1} l2={l2} onSelect={selectL3} onBack={() => setStep(2)} />}
       {step === 4 && (
@@ -702,7 +739,7 @@ export default function LabTab({ savedFormulas, onSaveFormula, onDeleteFormula, 
         <FormulaStep l1={l1} l2={l2} l3={l3}
           formula={formula} onBack={() => setStep(4)}
           onPctChange={handlePctChange} onRemove={handleRemove}
-          onSaveFormula={onSaveFormula} />
+          onSaveFormula={onSaveFormula} parentExp={parentExp} />
       )}
       <IngredientModal ingredient={modal} onClose={() => setModal(null)}
         inLab={modal ? selectedIds.has(modal.id) : false}
