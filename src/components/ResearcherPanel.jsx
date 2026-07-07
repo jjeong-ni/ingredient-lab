@@ -126,9 +126,9 @@ export function ResearcherIntro() {
  * variant="floating": 플로팅 말풍선 버튼 (BuildStep) — 탭하면 전체 코멘트 다이얼로그
  * variant="inline": 카드형 코멘트 리스트 (FormulaStep)
  */
-export default function ResearcherPanel({ formula, l3, variant = 'inline' }) {
+export default function ResearcherPanel({ formula, l3, goals, variant = 'inline' }) {
   const [open, setOpen] = useState(false);
-  const messages = useMemo(() => analyzeFormula(formula, l3), [formula, l3]);
+  const messages = useMemo(() => analyzeFormula(formula, l3, goals), [formula, l3, goals]);
   if (messages.length === 0) return null;
 
   const top = messages[0];

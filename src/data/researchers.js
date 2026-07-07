@@ -1,6 +1,7 @@
 import { ingredients, synergies, CATEGORIES } from './ingredients';
 import { parseConc } from './productTypes';
 import { getOrigin } from '../utils/origin';
+import { computeGoalScore, suggestForGoal } from './goals';
 
 /** 실험을 도와주는 연구팀 5인 */
 export const RESEARCHERS = [
@@ -67,7 +68,7 @@ const pick = (arr, n) => arr.slice(0, n);
  * 배합 분석 → 연구팀 코멘트 생성
  * @returns [{ rid, type: 'warn'|'praise'|'tip'|'info', text }]
  */
-export function analyzeFormula(formula, l3) {
+export function analyzeFormula(formula, l3, goals) {
   const msgs = [];
   const items = formula || [];
   const ids = items.map((f) => f.ingredient.id);
@@ -77,6 +78,23 @@ export function analyzeFormula(formula, l3) {
   if (items.length === 0) {
     msgs.push({ rid: 'nam', type: 'tip', text: l3 ? `${l3.label} 실험을 시작해볼까요? 성분을 고르면 저희 연구팀이 실시간으로 분석해드릴게요.` : '성분을 골라보세요. 연구팀이 실시간으로 분석해드릴게요.' });
     return msgs;
+  }
+
+  /* ── 남정균 과장: 목표 달성도 ───────────────────────── */
+  if (goals && goals.length > 0) {
+    const goalResult = computeGoalScore(goals, items);
+    if (goalResult) {
+      if (goalResult.score === 100) {
+        msgs.push({ rid: 'nam', type: 'praise', text: `설정한 목표 ${goalResult.total}개를 모두 달성했어요! 🎯 지금 배합으로 실험을 진행해도 좋을 것 같아요.` });
+      } else {
+        msgs.push({ rid: 'nam', type: 'info', text: `목표 달성도 ${goalResult.score}% (${goalResult.covered}/${goalResult.total}). 아직 부족한 부분이 있어요.` });
+        const existingIds = new Set(ids);
+        goalResult.results.filter((r) => !r.covered).forEach((r) => {
+          const s = suggestForGoal(r.goal, existingIds);
+          if (s) msgs.push({ rid: 'geum', type: 'tip', text: `"${r.goal.icon} ${r.goal.label}" 목표가 비어있어요. ${s.emoji} ${s.name}을 넣어보는 건 어때요?` });
+        });
+      }
+    }
   }
 
   /* ── 차보라 수석: 시너지 & 충돌 & 역할 겹침 ───────────── */

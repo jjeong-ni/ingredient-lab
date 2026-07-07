@@ -1,6 +1,8 @@
 import { useState, useMemo } from 'react';
 import { lineageMapByFormulaId } from '../utils/lineage';
 import CompareDialog from './CompareDialog';
+import { ingredients } from '../data/ingredients';
+import { GOAL_MAP, computeGoalScore } from '../data/goals';
 
 const SURFACE = {
   background: '#FFFFFF',
@@ -75,6 +77,17 @@ function ExperimentCard({ formula, onUpdateFormula, onDeleteFormula, onReExperim
   const version = formula.version || 1;
   const canCompare = lineage && lineage.length >= 2;
 
+  const goalScore = useMemo(() => {
+    if (!formula.goals || formula.goals.length === 0) return null;
+    const fullItems = formula.items
+      .map((it) => {
+        const ing = ingredients.find((i) => i.id === it.ingId) || ingredients.find((i) => i.name === it.name);
+        return ing ? { ingredient: ing, pct: it.pct } : null;
+      })
+      .filter(Boolean);
+    return computeGoalScore(formula.goals, fullItems);
+  }, [formula]);
+
   async function handleCopy() {
     const lines = [
       `${formula.icon} ${formula.name} (${formula.l1Label} · ${formula.l2Label})`,
@@ -118,7 +131,26 @@ function ExperimentCard({ formula, onUpdateFormula, onDeleteFormula, onReExperim
             {hasNote
               ? <span className="px-1.5 py-0.5 rounded-full" style={{ fontSize: 9, fontWeight: 700, background: '#F0FDF4', color: '#15803D', border: '1px solid #BBF7D0' }}>📝 기록됨</span>
               : <span className="px-1.5 py-0.5 rounded-full" style={{ fontSize: 9, fontWeight: 700, background: '#FFFBEB', color: '#B45309', border: '1px solid #FDE68A' }}>노트 미작성</span>}
+            {goalScore && (
+              <span className="px-1.5 py-0.5 rounded-full"
+                style={{ fontSize: 9, fontWeight: 800, background: '#FAFAFA', color: goalScore.score === 100 ? '#16a34a' : '#D97706', border: '1px solid #E5E5E5' }}>
+                🎯 {goalScore.score}%
+              </span>
+            )}
           </div>
+          {formula.goals?.length > 0 && (
+            <div className="flex flex-wrap gap-1 mt-1">
+              {formula.goals.map((gid) => {
+                const g = GOAL_MAP[gid];
+                if (!g) return null;
+                return (
+                  <span key={gid} className="px-1.5 py-0.5 rounded-full" style={{ fontSize: 9, fontWeight: 600, background: '#F4F4F5', color: '#666666' }}>
+                    {g.icon} {g.label}
+                  </span>
+                );
+              })}
+            </div>
+          )}
           <p className="text-[10px] mt-0.5" style={{ color: '#888888' }}>
             {formula.l1Label} · {formula.l2Label} · {formula.createdAt} · 성분 {formula.items.length}개 · {total.toFixed(1)}%
           </p>

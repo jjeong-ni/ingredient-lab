@@ -4,6 +4,7 @@ import { PRODUCT_TREE, suggestPct, parseConc } from '../data/productTypes';
 import IngredientCard from './IngredientCard';
 import ResearcherPanel, { ResearcherIntro } from './ResearcherPanel';
 import LabNotebook from './LabNotebook';
+import { GoalPicker, GoalScoreCard } from './GoalPanel';
 
 const SURFACE = {
   background: '#FFFFFF',
@@ -201,7 +202,7 @@ function Step3({ l1, l2, onSelect, onBack }) {
   );
 }
 
-function BuildStep({ l1, l2, l3, formula, onAdd, onRemove, onNext, onBack, onIngredientClick, labDictIds }) {
+function BuildStep({ l1, l2, l3, formula, onAdd, onRemove, onNext, onBack, onIngredientClick, labDictIds, goals, onGoalsChange }) {
   const [catFilter, setCatFilter] = useState('all');
   const [search, setSearch] = useState('');
   const selectedIds = new Set(formula.map((f) => f.ingredient.id));
@@ -262,6 +263,8 @@ function BuildStep({ l1, l2, l3, formula, onAdd, onRemove, onNext, onBack, onIng
         <p className="text-[10px] mt-1" style={{ color: '#888888' }}>{filtered.length}종</p>
       </div>
 
+      <GoalPicker goals={goals} onChange={onGoalsChange} />
+
       {dictIngredients.length > 0 && (
         <div className="px-4 pt-3 pb-2">
           <p className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{ color: '#888888' }}>📌 성분사전 선택 항목</p>
@@ -294,7 +297,7 @@ function BuildStep({ l1, l2, l3, formula, onAdd, onRemove, onNext, onBack, onIng
         ))}
       </div>
 
-      <ResearcherPanel formula={formula} l3={l3} variant="floating" />
+      <ResearcherPanel formula={formula} l3={l3} goals={goals} variant="floating" />
 
       {formula.length > 0 && (
         <div className="fixed bottom-16 left-1/2 -translate-x-1/2 w-full max-w-[480px] px-4 z-20">
@@ -407,7 +410,7 @@ const UNIT_OPTIONS = [
   { label: '1%', value: 1 },
 ];
 
-function FormulaStep({ l1, l2, l3, formula, onBack, onPctChange, onRemove, onSaveFormula, parentExp }) {
+function FormulaStep({ l1, l2, l3, formula, onBack, onPctChange, onRemove, onSaveFormula, parentExp, goals }) {
   const [guideOpen, setGuideOpen] = useState(false);
   const [unit, setUnit] = useState(0.5);
   const [copied, setCopied] = useState(false);
@@ -457,6 +460,7 @@ function FormulaStep({ l1, l2, l3, formula, onBack, onPctChange, onRemove, onSav
       note: { result: '', improve: '', rating: 0 },
       version: parentExp ? (parentExp.version || 1) + 1 : 1,
       parentId: parentExp?.id || null,
+      goals: goals || [],
     };
     onSaveFormula(data);
     setSaved(true);
@@ -497,6 +501,8 @@ function FormulaStep({ l1, l2, l3, formula, onBack, onPctChange, onRemove, onSav
 
       {guideOpen && <FormulaGuideDrawer l3={l3} onClose={() => setGuideOpen(false)} />}
 
+      <GoalScoreCard goals={goals} formula={formula} />
+
       <div className="rounded-lg p-4 mb-4" style={SURFACE}>
         <div className="flex items-center justify-between mb-2">
           <p className="font-semibold text-sm" style={{ color: '#171717' }}>총 배합 함량</p>
@@ -514,7 +520,7 @@ function FormulaStep({ l1, l2, l3, formula, onBack, onPctChange, onRemove, onSav
         </div>
       </div>
 
-      <ResearcherPanel formula={formula} l3={l3} variant="inline" />
+      <ResearcherPanel formula={formula} l3={l3} goals={goals} variant="inline" />
 
       <div className="mb-4">
         <p className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{ color: '#888888' }}>조절 단위</p>
@@ -683,6 +689,7 @@ export default function LabTab({ savedFormulas, onSaveFormula, onUpdateFormula, 
   const [formula, setFormula] = useState([]);
   const [modal, setModal] = useState(null);
   const [parentExp, setParentExp] = useState(null);
+  const [goals, setGoals] = useState([]);
 
   const selectedIds = new Set(formula.map((f) => f.ingredient.id));
 
@@ -696,8 +703,8 @@ export default function LabTab({ savedFormulas, onSaveFormula, onUpdateFormula, 
 
   function selectL1(item) { setL1(item); setStep(2); }
   function selectL2(item) { setL2(item); setStep(3); }
-  function selectL3(item) { setL3(item); setFormula([]); setParentExp(null); setStep(4); }
-  function reset() { setStep(1); setL1(null); setL2(null); setL3(null); setFormula([]); setParentExp(null); }
+  function selectL3(item) { setL3(item); setFormula([]); setParentExp(null); setGoals([]); setStep(4); }
+  function reset() { setStep(1); setL1(null); setL2(null); setL3(null); setFormula([]); setParentExp(null); setGoals([]); }
 
   function canReExperiment(f) {
     return !!findLeaf(f) && restoreItems(f).length > 0;
@@ -709,6 +716,7 @@ export default function LabTab({ savedFormulas, onSaveFormula, onUpdateFormula, 
     setL1(found.l1); setL2(found.l2); setL3(found.l3);
     setFormula(restoreItems(f));
     setParentExp(f);
+    setGoals(f.goals || []);
     setStep(5);
   }
 
@@ -733,13 +741,14 @@ export default function LabTab({ savedFormulas, onSaveFormula, onUpdateFormula, 
           formula={formula} onAdd={handleAdd} onRemove={handleRemove}
           onNext={() => setStep(5)} onBack={() => setStep(3)}
           onIngredientClick={setModal}
-          labDictIds={labDictIds} />
+          labDictIds={labDictIds}
+          goals={goals} onGoalsChange={setGoals} />
       )}
       {step === 5 && (
         <FormulaStep l1={l1} l2={l2} l3={l3}
           formula={formula} onBack={() => setStep(4)}
           onPctChange={handlePctChange} onRemove={handleRemove}
-          onSaveFormula={onSaveFormula} parentExp={parentExp} />
+          onSaveFormula={onSaveFormula} parentExp={parentExp} goals={goals} />
       )}
       <IngredientModal ingredient={modal} onClose={() => setModal(null)}
         inLab={modal ? selectedIds.has(modal.id) : false}
