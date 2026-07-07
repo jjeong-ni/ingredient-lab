@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { lineageMapByFormulaId } from '../utils/lineage';
+import CompareDialog from './CompareDialog';
 
 const SURFACE = {
   background: '#FFFFFF',
@@ -64,13 +66,14 @@ function NoteEditor({ formula, onUpdateFormula }) {
   );
 }
 
-function ExperimentCard({ formula, onUpdateFormula, onDeleteFormula, onReExperiment, canReExperiment }) {
+function ExperimentCard({ formula, onUpdateFormula, onDeleteFormula, onReExperiment, canReExperiment, lineage, onCompare }) {
   const [expanded, setExpanded] = useState(false);
   const [copied, setCopied] = useState(false);
   const note = formula.note || {};
   const hasNote = !!(note.result || note.improve || note.rating);
   const total = formula.items.reduce((s, i) => s + i.pct, 0);
   const version = formula.version || 1;
+  const canCompare = lineage && lineage.length >= 2;
 
   async function handleCopy() {
     const lines = [
@@ -104,6 +107,13 @@ function ExperimentCard({ formula, onUpdateFormula, onDeleteFormula, onReExperim
             {version > 1 && (
               <span className="px-1.5 py-0.5 rounded-full text-white"
                 style={{ fontSize: 9, fontWeight: 800, background: '#7C3AED' }}>{version}차</span>
+            )}
+            {canCompare && (
+              <button onClick={(e) => { e.stopPropagation(); onCompare(formula, lineage); }}
+                className="px-1.5 py-0.5 rounded-full transition-all active:scale-95"
+                style={{ fontSize: 9, fontWeight: 800, background: '#EFF6FF', color: '#1D4ED8', border: '1px solid #DBEAFE' }}>
+                🆚 비교
+              </button>
             )}
             {hasNote
               ? <span className="px-1.5 py-0.5 rounded-full" style={{ fontSize: 9, fontWeight: 700, background: '#F0FDF4', color: '#15803D', border: '1px solid #BBF7D0' }}>📝 기록됨</span>
@@ -169,6 +179,15 @@ function ExperimentCard({ formula, onUpdateFormula, onDeleteFormula, onReExperim
 export default function LabNotebook({ savedFormulas, onUpdateFormula, onDeleteFormula, onReExperiment, canReExperiment, onBack }) {
   const list = [...(savedFormulas || [])].reverse();
   const noteCount = list.filter((f) => f.note && (f.note.result || f.note.improve || f.note.rating)).length;
+  const lineageMap = useMemo(() => lineageMapByFormulaId(savedFormulas), [savedFormulas]);
+  const [compareState, setCompareState] = useState(null);
+
+  function handleCompare(formula, lineage) {
+    const idx = lineage.findIndex((f) => f.id === formula.id);
+    // 기본: 현재 실험과 바로 이전 버전 비교 (최초 버전이면 바로 다음 버전과 비교)
+    const [aIdx, bIdx] = idx > 0 ? [idx - 1, idx] : [idx, Math.min(1, lineage.length - 1)];
+    setCompareState({ lineage, initialA: lineage[aIdx], initialB: lineage[bIdx] });
+  }
 
   return (
     <div className="px-4 pt-3 pb-6">
@@ -199,9 +218,17 @@ export default function LabNotebook({ savedFormulas, onUpdateFormula, onDeleteFo
               onUpdateFormula={onUpdateFormula}
               onDeleteFormula={onDeleteFormula}
               onReExperiment={onReExperiment}
-              canReExperiment={canReExperiment} />
+              canReExperiment={canReExperiment}
+              lineage={lineageMap.get(f.id)}
+              onCompare={handleCompare} />
           ))}
         </div>
+      )}
+
+      {compareState && (
+        <CompareDialog lineage={compareState.lineage}
+          initialA={compareState.initialA} initialB={compareState.initialB}
+          onClose={() => setCompareState(null)} />
       )}
     </div>
   );
