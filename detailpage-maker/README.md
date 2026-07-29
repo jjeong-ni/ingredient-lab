@@ -7,6 +7,11 @@
 > 현재는 별도 API 키 없이 동작하는 **룰 기반 카피 엔진**을 사용하며,
 > 환경변수만 넣으면 실제 AI 생성으로 교체됩니다.
 
+## 배포 (Live)
+
+- **웹 데모:** https://detailpage-maker.vercel.app
+- Vercel(Expo Web export) 배포. `master` push 시 자동 재배포.
+
 ## 기능
 
 - 상품명 · 브랜드 · 카테고리 · 핵심 특징 · 톤앤매너 · 타겟 · 가격 · 사진 입력
