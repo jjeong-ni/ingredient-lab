@@ -1,0 +1,40 @@
+{
+  "expo": {
+    "name": "상세페이지 메이커",
+    "slug": "detailpage-maker",
+    "version": "1.0.0",
+    "scheme": "detailpagemaker",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.detailpagemaker.app"
+    },
+    "android": {
+      "package": "com.detailpagemaker.app"
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "상품 사진을 불러오기 위해 사진 접근 권한이 필요해요."
+        }
+      ],
+      [
+        "expo-media-library",
+        {
+          "savePhotosPermission": "완성된 상세페이지 이미지를 저장하기 위해 권한이 필요해요.",
+          "photosPermission": "완성된 상세페이지 이미지를 저장하기 위해 권한이 필요해요."
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
